@@ -201,3 +201,19 @@ footer nav a{color:var(--ink);font-weight:700;text-decoration:none;padding:6px 0
 .legal p{margin:0 0 12px;color:var(--ink)}
 .legal a{color:var(--red-dark);font-weight:600}
 .consent a{color:var(--yellow)}
+
+/* Thema-links en SEO-blokken */
+.themelinks{display:flex;flex-wrap:wrap;gap:8px}
+.themelinks a{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;background:#fff;border:1px solid var(--plate-line);border-radius:999px;text-decoration:none;font-weight:600;font-size:14.5px}
+.themelinks a:hover{border-color:var(--soft)}
+.themelinks i{width:12px;height:12px;border-radius:50%;background:var(--c);box-shadow:inset 0 -2px 0 rgba(0,0,0,.28)}
+.themelinks span{color:var(--muted);font-weight:700;font-variant-numeric:tabular-nums}
+.facts{margin:12px 0 0;font-size:15px;max-width:70ch}
+.insight b a{color:inherit}
+.title h2.cardtitle{margin:0;font-size:16.5px;line-height:1.25;font-weight:700;font-stretch:105%}
+.title h2.cardtitle a{text-decoration:none}
+.title h2.cardtitle a:hover{text-decoration:underline}
+.card > .btn.ghost{margin-top:2px}
+.foot-themes{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 16px}
+.foot-themes a{color:var(--muted);text-decoration:none;padding:6px 0;font-size:13px}
+.foot-themes a:hover{color:var(--ink);text-decoration:underline}

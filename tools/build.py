@@ -42,6 +42,37 @@ IMAGES = json.loads(IMAGES_FILE.read_text()) if IMAGES_FILE.exists() else {}
 for s in SETS:
     s['img'] = IMAGES.get(s['n'], '')
 
+def theme_slug(t):
+    return slugify(t)
+
+THEMES_ALL = sorted({x['t'] for x in SETS}, key=lambda t: -sum(1 for x in SETS if x['t'] == t))
+AVG_PPP = sum(x['p'] / x['pc'] for x in SETS) / len(SETS)
+
+def set_facts(s):
+    same = [x for x in SETS if x['t'] == s['t']]
+    by_pc = sorted(same, key=lambda x: -x['pc'])
+    rank = by_pc.index(s) + 1
+    ppp = s['p'] / s['pc']
+    t_avg = sum(x['p'] / x['pc'] for x in same) / len(same)
+    out = []
+    if len(same) > 1:
+        if rank == 1:
+            out.append(f"Dit is de grootste van de {len(same)} {s['t']}-sets die eind 2026 stoppen.")
+        elif rank == len(same):
+            out.append(f"Dit is de kleinste van de {len(same)} {s['t']}-sets die eind 2026 stoppen.")
+        else:
+            out.append(f"Qua aantal stenen staat deze set op plek {rank} van de {len(same)} {s['t']}-sets die eind 2026 stoppen.")
+        diff = (ppp - t_avg) / t_avg * 100
+        if abs(diff) < 5:
+            out.append(f"Met {ppp*100:.1f} cent per steen zit hij rond het gemiddelde van het thema.".replace('.', ',', 1))
+        elif diff < 0:
+            out.append(f"Met {ppp*100:.1f} cent per steen is hij {abs(diff):.0f}% voordeliger per steen dan gemiddeld in {s['t']}.".replace('.', ',', 1))
+        else:
+            out.append(f"Met {ppp*100:.1f} cent per steen is hij {diff:.0f}% duurder per steen dan gemiddeld in {s['t']}.".replace('.', ',', 1))
+    else:
+        out.append(f"Dit is de enige {s['t']}-set op de lijst van sets die eind 2026 stoppen.")
+    return ' '.join(out)
+
 def shade(hexc, amt):
     n = int(hexc[1:], 16); r, g, b = n >> 16, (n >> 8) & 255, n & 255
     t = 0 if amt < 0 else 255; p = abs(amt)
@@ -88,6 +119,14 @@ def head(title, desc, path, extra=''):
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{SITE_URL}{path}">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Steenradar">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:image" content="{SITE_URL}/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="theme-color" content="#d01012">
 <link rel="preload" href="/assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/style.css">
@@ -140,10 +179,12 @@ def alert_block(set_n=None, set_name=None):
   </section>
 '''
 
+FOOT_THEMES = ''.join(f'<a href="/thema/{slugify(t)}/">LEGO {e(t)}</a>' for t in sorted({x['t'] for x in SETS}))
 LEGAL_LINKS = '<a href="/privacy/">Privacy</a><a href="/contact/">Contact</a>' if LEGAL_OK else ''
 FOOTER = f'''<footer>
   <div class="wrap">
     <nav aria-label="Voettekst"><a href="/">Alle sets</a><a href="/#meldingen">Meldingen</a><a href="/uitleg/">Uitleg</a>{LEGAL_LINKS}</nav>
+    <nav class="foot-themes" aria-label="Thema's">{FOOT_THEMES}</nav>
     <p>Prijzen vergelijken op Steenradar is gratis. Als je via een winkellink iets koopt, kunnen wij een kleine commissie krijgen; jij betaalt niets extra. De volgorde van sets en winkels hangt daar niet van af.</p>
     <p>Stopdata en adviesprijzen zijn verwachtingen op basis van openbare bronnen en kunnen veranderen. Controleer altijd de prijs bij de winkel.</p>
     <p>LEGO® is een handelsmerk van de LEGO Group, die deze site niet sponsort, autoriseert of onderschrijft. Steenradar is een onafhankelijke site.</p>
@@ -179,8 +220,10 @@ for t, c in counts:
     studs = ''.join('<i class="stud"></i>' for _ in range(c))
     CHART += f'<button class="srow" type="button" data-theme="{e(t)}" style="--c:{col}" aria-label="{e(t)}: {c} sets, toon deze sets"><span class="lbl">{e(t)}</span><span class="cnt">{c}</span><span class="studs" aria-hidden="true">{studs}</span></button>'
 
+THEMELINKS = ''.join(f'<a href="/thema/{theme_slug(t)}/" style="--c:{THEME_COLORS.get(t, "#444")}"><i></i>{e(t)}<span>{sum(1 for x in SETS if x["t"] == t)}</span></a>' for t in THEMES_ALL)
+WEBSITE_LD = '<script type="application/ld+json">' + json.dumps({"@context": "https://schema.org", "@type": "WebSite", "name": "Steenradar", "url": SITE_URL + '/', "inLanguage": "nl-NL", "description": "Overzicht van LEGO-sets die uit productie gaan, met prijslinks naar Nederlandse winkels."}, ensure_ascii=False) + '</script>\n'
 index = head('Steenradar — LEGO-sets die eind 2026 uit productie gaan',
-             f'{len(SETS)} LEGO-sets die naar verwachting op {STOP_DATE} stoppen. Vergelijk prijzen bij Nederlandse winkels en krijg een seintje voordat je set verdwijnt.', '/')
+             f'{len(SETS)} LEGO-sets die naar verwachting op {STOP_DATE} stoppen. Vergelijk prijzen bij Nederlandse winkels en krijg een seintje voordat je set verdwijnt.', '/', WEBSITE_LD)
 index += topbar('sets')
 index += f'''<section class="hero">
   <div class="wrap">
@@ -202,6 +245,8 @@ index += f'''<section class="hero">
 <section class="wrap" aria-label="Uitgelicht">
   <div class="section-head"><h2>Populair bij verzamelaars</h2><p>De grote sets waar het snelst om gevochten wordt.</p></div>
   <div class="rail">{FEATURED}</div>
+  <div class="section-head"><h2>Per thema</h2><p>Elk thema heeft een eigen overzicht.</p></div>
+  <nav class="themelinks" aria-label="Thema's">{THEMELINKS}</nav>
   <div class="section-head" id="alle-sets"><h2>Alle sets die stoppen</h2><p>Zoek, filter op thema of zet sets op je lijst.</p></div>
 </section>
 <div class="controls">
@@ -250,8 +295,8 @@ for s in SETS:
     path = f"/sets/{s['slug']}/"
     name = s['name']
     ppp = f"{s['p'] / s['pc'] * 100:.1f}".replace('.', ',')
-    title = f"LEGO {s['n']} {name} stopt eind 2026 – prijzen vergelijken | Steenradar"
-    desc = f"LEGO {s['t']} {s['n']} {name} gaat naar verwachting op {STOP_DATE} uit productie. Adviesprijs {eur(s['p'])}, {num(s['pc'])} stenen. Vergelijk prijzen bij bol, Intertoys, LEGO.com en meer."
+    title = next(t for t in (f"LEGO {s['n']} {name} stopt eind 2026 | Steenradar", f"LEGO {s['n']} {name} stopt eind 2026", f"LEGO {s['n']} {name}") if len(t) <= 60 or t == f"LEGO {s['n']} {name}")
+    desc = f"LEGO {s['n']} {name} stopt naar verwachting op {STOP_DATE}. Adviesprijs {eur(s['p'])}, {num(s['pc'])} stenen. Vergelijk prijzen in NL."
     faq = [
         (f"Wanneer stopt LEGO {s['n']} {name}?", f"Naar verwachting gaat deze set op {STOP_DATE} uit productie. LEGO kan die datum nog veranderen, dus check het regelmatig."),
         (f"Wat is de adviesprijs van LEGO {s['n']}?", f"De adviesprijs is {eur(s['p'])} voor {num(s['pc'])} stenen, ofwel {ppp} cent per steen."),
@@ -261,7 +306,8 @@ for s in SETS:
     ld = [
         {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
             {"@type": "ListItem", "position": 1, "name": "Alle sets", "item": SITE_URL + '/'},
-            {"@type": "ListItem", "position": 2, "name": f"LEGO {s['n']} {name}", "item": SITE_URL + path}]},
+            {"@type": "ListItem", "position": 2, "name": f"{s['t']}", "item": SITE_URL + f"/thema/{theme_slug(s['t'])}/"},
+            {"@type": "ListItem", "position": 3, "name": f"LEGO {s['n']} {name}", "item": SITE_URL + path}]},
         {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
             {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}
     ]
@@ -273,7 +319,7 @@ for s in SETS:
     page = head(title, desc, path, extra) + topbar('sets')
     page += f'''<section class="hero">
   <div class="wrap">
-    <nav class="crumbs" aria-label="Kruimelpad"><a href="/">Alle sets</a><span>/</span>{e(s['t'])}</nav>
+    <nav class="crumbs" aria-label="Kruimelpad"><a href="/">Alle sets</a><span>/</span><a href="/thema/{theme_slug(s['t'])}/">{e(s['t'])}</a></nav>
     <div class="set-hero">
       <div>
         <h1>LEGO {s['n']} {e(name)}</h1>
@@ -292,9 +338,10 @@ for s in SETS:
       <div><span>Stenen</span><b>{num(s['pc'])}</b></div>
       <div><span>Prijs per steen</span><b>{ppp} ct</b></div>
       <div><span>Verwachte stopdatum</span><b>31 dec 2026</b></div>
-      <div><span>Thema</span><b>{e(s['t'])}</b></div>
+      <div><span>Thema</span><b><a href="/thema/{theme_slug(s['t'])}/">{e(s['t'])}</a></b></div>
       <div><span>Laagste prijs nu</span><b class="note">Vergelijk hieronder</b></div>
     </div>
+    <p class="facts">{e(set_facts(s))}</p>
     <p class="datanote">Stopdatum en adviesprijs komen uit openbare bronnen en kunnen veranderen. De actuele prijs zie je bij de winkel zelf.</p>
     <button class="favbtn" id="favbtn" data-set="{s['n']}" aria-pressed="false">♡ Zet op mijn lijst</button>
   </section>
@@ -311,6 +358,7 @@ for s in SETS:
         page += f'''
   <section class="block">
     <h2>Meer {e(s['t'])}-sets die stoppen</h2>
+    <p class="datanote" style="margin:-4px 0 12px"><a href="/thema/{theme_slug(s['t'])}/">Bekijk alle {len(by_theme[s['t']])} {e(s['t'])}-sets</a></p>
     <div class="grid">
 '''
         for r in related:
@@ -359,6 +407,59 @@ uitleg += topbar('uitleg') + '''<section class="hero"><div class="wrap">
 ''' + alert_block() + '</main>\n' + FOOTER + bottomnav('uitleg') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
 write('/uitleg/', uitleg)
 
+# ---------- Themapagina's ----------
+theme_urls = []
+for t in THEMES_ALL:
+    items = sorted(by_theme[t], key=lambda x: -x['pc'])
+    slug = theme_slug(t); path = f'/thema/{slug}/'
+    col = THEME_COLORS.get(t, '#444')
+    total_pc = sum(x['pc'] for x in items); cheapest = min(items, key=lambda x: x['p']); biggest = items[0]
+    n = len(items)
+    title = f'LEGO {t}-sets die stoppen in 2026 ({n}) | Steenradar'
+    desc = f'{n} LEGO {t}-sets stoppen naar verwachting op {STOP_DATE}, van {eur(cheapest["p"])} tot {eur(max(x["p"] for x in items))}. Bekijk ze en vergelijk prijzen.'
+    intro = (f'{n} {t}-sets gaan naar verwachting op {STOP_DATE} uit productie, samen goed voor {num(total_pc)} stenen. '
+             f'De grootste is {biggest["name"]} ({num(biggest["pc"])} stenen), de goedkoopste {cheapest["name"]} ({eur(cheapest["p"])}).') if n > 1 else \
+            f'Eén {t}-set gaat naar verwachting op {STOP_DATE} uit productie: {biggest["name"]} met {num(biggest["pc"])} stenen.'
+    ld = [{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+              {"@type": "ListItem", "position": 1, "name": "Alle sets", "item": SITE_URL + '/'},
+              {"@type": "ListItem", "position": 2, "name": t, "item": SITE_URL + path}]},
+          {"@context": "https://schema.org", "@type": "ItemList", "name": f"LEGO {t}-sets die stoppen in 2026", "itemListElement": [
+              {"@type": "ListItem", "position": i + 1, "url": SITE_URL + f"/sets/{x['slug']}/", "name": f"LEGO {x['n']} {x['name']}"} for i, x in enumerate(items)]}]
+    extra = ''.join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>\n' for x in ld)
+    page = head(title, desc, path, extra) + topbar('sets')
+    page += f'''<section class="hero"><div class="wrap">
+  <nav class="crumbs" aria-label="Kruimelpad"><a href="/">Alle sets</a><span>/</span>{e(t)}</nav>
+  <h1>LEGO {e(t)}-sets die stoppen in 2026</h1>
+  <p class="lede">{e(intro)}</p>
+  <span class="countchip">Nog <b data-days>–</b> dagen tot 31 december</span>
+</div></section>
+<main class="wrap">
+  <div class="grid">
+'''
+    for x in items:
+        ppp = f"{x['p'] / x['pc'] * 100:.1f}".replace('.', ',')
+        page += f'''    <article class="card"><div class="top">{thumb(x, col)}<div class="title"><h2 class="cardtitle"><a href="/sets/{x['slug']}/">{e(x['name'])}</a></h2><p>Set {x['n']}</p></div></div>
+      <div class="figs"><div><span>Adviesprijs</span><b>{eur(x['p'])}</b></div><div><span>Stenen</span><b>{num(x['pc'])}</b></div><div><span>Per steen</span><b>{ppp} ct</b></div></div>
+      <a class="btn ghost" href="/sets/{x['slug']}/">Prijsinzicht en winkels</a></article>
+'''
+    page += f'''  </div>
+  <div class="section-head"><h2>Andere thema's</h2></div>
+  <nav class="themelinks" aria-label="Thema's">{''.join(f'<a href="/thema/{theme_slug(o)}/" style="--c:{THEME_COLORS.get(o, "#444")}"><i></i>{e(o)}<span>{len(by_theme[o])}</span></a>' for o in THEMES_ALL if o != t)}</nav>
+  {alert_block()}
+</main>
+''' + FOOTER + bottomnav('sets') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
+    write(path, page)
+    theme_urls.append(path)
+
+# ---------- 404 ----------
+notfound = head('Pagina niet gevonden | Steenradar', 'Deze pagina bestaat niet (meer).', '/404', '<meta name="robots" content="noindex">\n')
+notfound += topbar('') + f'''<section class="hero"><div class="wrap"><h1>Deze pagina bestaat niet</h1>
+  <p class="lede">Misschien is de set verplaatst of klopt de link niet. Kies hieronder een thema of ga terug naar het overzicht.</p>
+  <div class="ctas"><a class="cta primary" href="/">Naar alle sets</a></div></div></section>
+<main class="wrap"><nav class="themelinks" aria-label="Thema's">{THEMELINKS}</nav></main>
+''' + FOOTER + bottomnav('') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
+(ROOT / '404.html').write_text(notfound)
+
 # ---------- Privacy + contact (alleen als data/site.json is ingevuld) ----------
 legal_urls = []
 if LEGAL_OK:
@@ -404,9 +505,10 @@ else:
     print('Let op: data/site.json is nog niet ingevuld, dus privacy- en contactpagina zijn overgeslagen.')
 
 # ---------- Sitemap + robots ----------
-urls = ['/', '/uitleg/'] + legal_urls + [f"/sets/{s['slug']}/" for s in SETS]
+urls = ['/', '/uitleg/'] + theme_urls + legal_urls + [f"/sets/{s['slug']}/" for s in SETS]
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
-sm += ''.join(f'  <url><loc>{SITE_URL}{u}</loc></url>\n' for u in urls) + '</urlset>\n'
+LASTMOD = os.environ.get('LASTMOD', __import__('datetime').date.today().isoformat())
+sm += ''.join(f'  <url><loc>{SITE_URL}{u}</loc><lastmod>{LASTMOD}</lastmod></url>\n' for u in urls) + '</urlset>\n'
 (ROOT / 'sitemap.xml').write_text(sm)
 (ROOT / 'robots.txt').write_text(f'User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: {SITE_URL}/sitemap.xml\n')
 print(f'Klaar: {len(urls)} pagina\'s gebouwd voor {SITE_URL}')

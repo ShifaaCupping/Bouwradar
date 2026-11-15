@@ -5,7 +5,10 @@ Nederlandse tracker voor LEGO-sets die eind 2026 uit productie gaan.
 ## Wat erin zit
 - `index.html` — overzicht van alle sets (zoeken, filteren, Mijn lijst)
 - `sets/<nummer>-<naam>/` — een eigen pagina per set met Prijsinzicht, winkellinks, melding en FAQ (goed voor Google)
+- `thema/<thema>/` — overzichtspagina per thema (bijv. /thema/star-wars/)
 - `uitleg/` — hoe het werkt + veelgestelde vragen
+- `404.html` — nette pagina als een link niet klopt
+- `favicon.svg`, `assets/og.png` — icoon en deelafbeelding (opnieuw maken: `tools/make_images.py`)
 - `assets/` — gedeelde CSS en JavaScript. De winkellinks staan in `assets/app.js` (`shopLinks`): zet hier later je affiliate-links.
 - `data/sets.json` — de setlijst. Pas je die aan, draai dan: `python3 tools/build.py`
 - `data/images.json` — productfoto's per setnummer, bijv. `{"75192": "https://...jpg"}`. Gebruik alleen foto's die je mag gebruiken (uit je bol- of LEGO-affiliatefeed). Daarna `python3 tools/build.py`.
