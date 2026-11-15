@@ -43,6 +43,10 @@ IMAGES = json.loads(IMAGES_FILE.read_text()) if IMAGES_FILE.exists() else {}
 for s in SETS:
     s['img'] = IMAGES.get(s['n'], '')
 
+CHECKED = '15 november 2026'
+VERIFY_OK = f'Stopdatum bevestigd door twee onafhankelijke bronnen (<a href="/uitleg/#bronnen">Brick Fanatics en The Brick Observer</a>), gecontroleerd op {CHECKED}. LEGO kan de datum nog aanpassen.'
+VERIFY_ONE = f'Stopdatum gemeld door één bron (<a href="/uitleg/#bronnen">Brick Fanatics</a>) en nog niet bevestigd door een tweede bron, gecontroleerd op {CHECKED}.'
+
 def theme_slug(t):
     return slugify(t)
 
@@ -172,7 +176,8 @@ def alert_block(set_n=None, set_name=None):
     <h2>{h2}</h2>
     <p>{p}</p>
     <form id="form"{data} novalidate>
-      <input type="email" id="email" placeholder="jouw@email.nl" aria-label="E-mailadres" autocomplete="email" required>
+      <input type="email" id="email" placeholder="jouw@email.nl" aria-label="E-mailadres" autocomplete="email" maxlength="254" required>
+      <input type="text" id="website" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button type="submit">Meld mij aan</button>
     </form>
     <label class="consent"><input type="checkbox" id="ok" required> <span>Ik ga akkoord dat Steenradar mijn e-mailadres en mijn lijstje bewaart om mij meldingen te sturen{PRIVACY_LINK}.</span></label>
@@ -184,7 +189,7 @@ FOOT_THEMES = ''.join(f'<a href="/thema/{slugify(t)}/">LEGO {e(t)}</a>' for t in
 LEGAL_LINKS = ('<a href="/privacy/">Privacy</a>' if LEGAL_OK else '') + ('<a href="/contact/">Contact</a>' if CONTACT_OK else '')
 FOOTER = f'''<footer>
   <div class="wrap">
-    <nav aria-label="Voettekst"><a href="/">Alle sets</a><a href="/#meldingen">Meldingen</a><a href="/uitleg/">Uitleg</a>{LEGAL_LINKS}</nav>
+    <nav aria-label="Voettekst"><a href="/">Alle sets</a><a href="/#meldingen">Meldingen</a><a href="/uitleg/">Uitleg</a><a href="/gids/wanneer-stopt-een-lego-set/">Wanneer stopt een set?</a>{LEGAL_LINKS}</nav>
     <nav class="foot-themes" aria-label="Thema's">{FOOT_THEMES}</nav>
     <p>Prijzen vergelijken op Steenradar is gratis. Als je via een winkellink iets koopt, kunnen wij een kleine commissie krijgen; jij betaalt niets extra. De volgorde van sets en winkels hangt daar niet van af.</p>
     <p>Stopdata en adviesprijzen zijn verwachtingen op basis van openbare bronnen en kunnen veranderen. Controleer altijd de prijs bij de winkel.</p>
@@ -195,7 +200,11 @@ FOOTER = f'''<footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 '''.replace('{{', '{').replace('}}', '}')
 
+AFF = {k: v for k, v in SITE.get('affiliate', {}).items() if not k.startswith('_') and v.strip()}
+(ROOT / 'assets/config.js').write_text('// Gegenereerd door tools/build.py uit data/site.json\nwindow.BR_AFF = ' + json.dumps(AFF) + ';\n')
+
 def write(path, content):
+    content = content.replace('<script src="/assets/app.js"></script>', '<script src="/assets/config.js"></script>\n<script src="/assets/app.js"></script>')
     p = ROOT / path.lstrip('/')
     if path.endswith('/'):
         p = p / 'index.html'
@@ -246,7 +255,7 @@ index += f'''<section class="hero">
 <section class="wrap" aria-label="Uitgelicht">
   <div class="section-head"><h2>Populair bij verzamelaars</h2><p>De grote sets waar het snelst om gevochten wordt.</p></div>
   <div class="rail">{FEATURED}</div>
-  <div class="section-head"><h2>Per thema</h2><p>Elk thema heeft een eigen overzicht.</p></div>
+  <div class="section-head"><h2>Per thema</h2><p>Elk thema heeft een eigen overzicht. Nieuw hier? Lees eerst <a href="/gids/wanneer-stopt-een-lego-set/">wanneer een LEGO-set stopt</a>.</p></div>
   <nav class="themelinks" aria-label="Thema's">{THEMELINKS}</nav>
   <div class="section-head" id="alle-sets"><h2>Alle sets die stoppen</h2><p>Zoek, filter op thema of zet sets op je lijst.</p></div>
 </section>
@@ -343,7 +352,7 @@ for s in SETS:
       <div><span>Laagste prijs nu</span><b class="note">Vergelijk hieronder</b></div>
     </div>
     <p class="facts">{e(set_facts(s))}</p>
-    <p class="datanote">Stopdatum en adviesprijs komen uit openbare bronnen en kunnen veranderen. De actuele prijs zie je bij de winkel zelf.</p>
+    <p class="datanote">{VERIFY_OK if s.get('v') else VERIFY_ONE} De actuele prijs zie je bij de winkel zelf.</p>
     <button class="favbtn" id="favbtn" data-set="{s['n']}" aria-pressed="false">♡ Zet op mijn lijst</button>
   </section>
 
@@ -400,13 +409,58 @@ uitleg += topbar('uitleg') + '''<section class="hero"><div class="wrap">
   </section>
   <section class="block faq">
     <h2>Veelgestelde vragen</h2>
-    <details><summary>Waar komen de stopdata vandaan?</summary><p>Uit openbare lijsten van LEGO-fans en -nieuwssites. Het zijn verwachtingen: LEGO kan een set eerder of later laten stoppen.</p></details>
+    <details id="bronnen"><summary>Waar komen de stopdata vandaan?</summary><p>We vergelijken twee onafhankelijke lijsten: <a href="https://www.brickfanatics.com/every-lego-set-retiring-this-year-and-beyond/" rel="nofollow noopener" target="_blank">Brick Fanatics</a> en <a href="https://thebrickobserver.com/every-lego-set-retiring-in-2026/" rel="nofollow noopener" target="_blank">The Brick Observer</a>. Staat een set in allebei, dan noemen we de stopdatum bevestigd. Het blijven verwachtingen: LEGO kan een set eerder of later laten stoppen. Laatst gecontroleerd op 15 november 2026.</p></details>
     <details><summary>Hoe verdient Steenradar geld?</summary><p>Als je via een winkellink iets koopt, kunnen wij een kleine commissie krijgen. Jij betaalt niets extra, en de volgorde van sets en winkels hangt daar niet van af.</p></details>
     <details><summary>Wat doen jullie met mijn e-mailadres?</summary><p>We gebruiken het alleen om je meldingen over je lijstje te sturen. Je kunt je altijd afmelden.</p></details>
     <details><summary>Is Steenradar van LEGO of van een winkel?</summary><p>Nee. Steenradar is een onafhankelijke site en is niet verbonden aan de LEGO Group, bol of een andere winkel. Via de winkellinks ga je naar de website van de winkel en bestel je daar.</p></details>
   </section>
 ''' + alert_block() + '</main>\n' + FOOTER + bottomnav('uitleg') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
 write('/uitleg/', uitleg)
+
+# ---------- Gids ----------
+GUIDE_PATH = '/gids/wanneer-stopt-een-lego-set/'
+guide_faq = [
+    ("Wanneer gaan LEGO-sets uit productie?", "Meestal in twee rondes per jaar: eind juli en eind december. De meeste sets stoppen op 31 december."),
+    ("Hoe lang is een LEGO-set te koop?", "Vaak ongeveer twee tot drie jaar, maar dat verschilt sterk per set en thema. Grote sets voor volwassenen blijven soms langer, kleine sets korter."),
+    ("Hoe weet ik of een set bijna stopt?", "Op LEGO.com staat bij sets die bijna verdwijnen het label 'Binnenkort uit handel'. Steenradar zet alle verwachte stopdata per set op een rij."),
+    ("Worden sets duurder als ze gestopt zijn?", "Vaak wel, omdat winkels geen nieuwe voorraad meer krijgen en doorverkopers de prijs bepalen. Dat is niet gegarandeerd en verschilt per set."),
+]
+g_ld = [{"@context": "https://schema.org", "@type": "Article", "headline": "Wanneer stopt een LEGO-set? Zo werkt het", "inLanguage": "nl-NL",
+         "datePublished": "2026-11-15", "dateModified": "2026-11-15", "author": {"@type": "Organization", "name": "Steenradar"}},
+        {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in guide_faq]}]
+guide = head('Wanneer stopt een LEGO-set? Zo werkt het | Steenradar',
+             'Wanneer LEGO-sets uit productie gaan, hoe je het ziet aankomen en hoe je een set nog voor de gewone prijs koopt.',
+             GUIDE_PATH, ''.join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>\n' for x in g_ld))
+top5 = sorted(SETS, key=lambda x: -x['pc'])[:5]
+guide += topbar('uitleg') + f'''<section class="hero"><div class="wrap">
+  <nav class="crumbs" aria-label="Kruimelpad"><a href="/">Alle sets</a><span>/</span>Gids</nav>
+  <h1>Wanneer stopt een LEGO-set?</h1>
+  <p class="lede">Elke LEGO-set is maar een paar jaar te koop. Zo werkt het, zo zie je het aankomen en zo koop je een set nog voor de gewone prijs.</p>
+</div></section>
+<main class="wrap legal">
+  <h2>Twee rondes per jaar</h2>
+  <p>LEGO haalt sets meestal in twee rondes uit productie: eind juli en eind december. De grootste ronde is op 31 december. Op dit moment staan er {len(SETS)} sets op de lijst voor 31 december 2026, verdeeld over {len(THEMES_ALL)} thema's.</p>
+  <h2>Hoe lang is een set te koop?</h2>
+  <p>Vaak ongeveer twee tot drie jaar. Sets uit grote licenties zoals Star Wars en Harry Potter wisselen snel, omdat er steeds nieuwe films en series zijn. Grote sets voor volwassenen, zoals de Ultimate Collector Series, blijven soms langer.</p>
+  <h2>Zo zie je het aankomen</h2>
+  <p>Op LEGO.com krijgen sets die bijna verdwijnen het label "Binnenkort uit handel". Fansites houden lijsten bij met verwachte stopdata; Steenradar vergelijkt twee van die lijsten en zet de uitkomst per set op een rij. Een stopdatum blijft een verwachting: LEGO kan een set eerder of later laten stoppen.</p>
+  <h2>Wat gebeurt er met de prijs?</h2>
+  <p>Zolang een set in de winkel ligt, zit de prijs rond de adviesprijs, met af en toe korting. Na de stopdatum raken winkelvoorraden op en bepalen doorverkopers de prijs. Bij populaire sets loopt die dan vaak op. Dat is geen garantie: sommige sets blijven lang in de schappen liggen of worden juist afgeprijsd.</p>
+  <h2>Zo koop je nog voor de gewone prijs</h2>
+  <p>Begin met de sets die je echt wilt hebben en zet ze op je lijst. Vergelijk de prijs bij een paar winkels, want kortingen verschillen per winkel en per week. Rond Black Friday, Sinterklaas en kerst zijn er vaak acties. Wacht niet tot de laatste week van december: populaire sets zijn dan vaak al uitverkocht.</p>
+  <h2>De grootste sets die eind 2026 stoppen</h2>
+  <p>{'; '.join(f'<a href="/sets/{x["slug"]}/">LEGO {x["n"]} {e(x["name"])}</a> ({num(x["pc"])} stenen)' for x in top5)}.</p>
+  <h2>Per thema</h2>
+  <nav class="themelinks" aria-label="Thema's">{THEMELINKS}</nav>
+  <section class="block faq">
+    <h2>Veelgestelde vragen</h2>
+    {''.join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in guide_faq)}
+  </section>
+  <p class="datanote">Laatst bijgewerkt: 15 november 2026.</p>
+</main>
+''' + FOOTER + bottomnav('uitleg') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
+write(GUIDE_PATH, guide)
 
 # ---------- Themapagina's ----------
 theme_urls = []
@@ -453,13 +507,13 @@ for t in THEMES_ALL:
     theme_urls.append(path)
 
 # ---------- 404 ----------
-notfound = head('Pagina niet gevonden | Steenradar', 'Deze pagina bestaat niet (meer).', '/404', '<meta name="robots" content="noindex">\n')
+notfound = head('Pagina niet gevonden | Steenradar', 'Deze pagina bestaat niet (meer). Bekijk alle LEGO-sets die eind 2026 stoppen of kies een thema.', '/404', '<meta name="robots" content="noindex">\n')
 notfound += topbar('') + f'''<section class="hero"><div class="wrap"><h1>Deze pagina bestaat niet</h1>
   <p class="lede">Misschien is de set verplaatst of klopt de link niet. Kies hieronder een thema of ga terug naar het overzicht.</p>
   <div class="ctas"><a class="cta primary" href="/">Naar alle sets</a></div></div></section>
 <main class="wrap"><nav class="themelinks" aria-label="Thema's">{THEMELINKS}</nav></main>
 ''' + FOOTER + bottomnav('') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
-(ROOT / '404.html').write_text(notfound)
+(ROOT / '404.html').write_text(notfound.replace('<script src="/assets/app.js"></script>', '<script src="/assets/config.js"></script>\n<script src="/assets/app.js"></script>'))
 
 # ---------- Privacy + contact (alleen als data/site.json is ingevuld) ----------
 legal_urls = []
@@ -475,13 +529,13 @@ if LEGAL_OK:
   <h2>Wie is verantwoordelijk?</h2>
   <p>Steenradar is een website van {who}, ingeschreven bij de KVK onder nummer {kvk}. Dit bedrijf is verantwoordelijk voor de verwerking van je gegevens. Vragen over privacy stuur je naar <a href="mailto:{mail}">{mail}</a>.</p>
   <h2>Welke gegevens en waarom</h2>
-  <p><b>Meldingen.</b> Meld je je aan voor een seintje, dan bewaren we je e-mailadres en de setnummers op je lijst. We gebruiken die alleen om je te mailen als de stopdatum van die sets nadert of verandert. De grondslag is je toestemming, die je geeft met het vinkje bij het formulier.</p>
+  <p><b>Meldingen.</b> Meld je je aan voor een seintje, dan bewaren we je e-mailadres en de setnummers op je lijst. We gebruiken die alleen om je te mailen als de stopdatum van die sets nadert of verandert. De grondslag is je toestemming, die je geeft met het vinkje bij het formulier. We bewaren ook het moment waarop je die toestemming gaf. In elke mail staat een afmeldlink; daarmee worden je e-mailadres en lijst direct verwijderd.</p>
   <p><b>Mijn lijst.</b> De sets die je met een hartje bewaart, staan alleen in je eigen browser (localStorage). Wij kunnen die niet zien, tenzij je je aanmeldt voor meldingen.</p>
   <p><b>Bezoek aan de site.</b> De site draait bij Cloudflare. Cloudflare verwerkt technische gegevens zoals je IP-adres om de site te leveren en te beveiligen. Wij gebruiken geen analytische of tracking-cookies en laden geen lettertypes of scripts van Google of andere derden.</p>
   <h2>Winkellinks</h2>
   <p>Klik je op een winkellink, bijvoorbeeld naar bol, dan ga je naar de website van die winkel. Die winkel kan daar cookies plaatsen om bij te houden dat je via Steenradar kwam, zodat wij een kleine commissie krijgen als je iets koopt. Daarvoor geldt de privacyverklaring van die winkel.</p>
   <h2>Hoe lang we gegevens bewaren</h2>
-  <p>Je e-mailadres en lijst bewaren we tot je je afmeldt. Daarna verwijderen we ze binnen 30 dagen.</p>
+  <p>Je e-mailadres en lijst bewaren we tot je je afmeldt. Meld je je af via de link in een mail, dan verwijderen we ze direct; via een verzoek per mail binnen 30 dagen.</p>
   <h2>Met wie we gegevens delen</h2>
   <p>We verkopen je gegevens niet. Cloudflare host de site en de database waarin aanmeldingen staan; zij verwerken die gegevens alleen voor ons.</p>
   <h2>Jouw rechten</h2>
@@ -512,7 +566,7 @@ if LEGAL_OK and not CONTACT_OK:
     print('Let op: geen adres in data/site.json, dus de contactpagina is overgeslagen.')
 
 # ---------- Sitemap + robots ----------
-urls = ['/', '/uitleg/'] + theme_urls + legal_urls + [f"/sets/{s['slug']}/" for s in SETS]
+urls = ['/', '/uitleg/', GUIDE_PATH] + theme_urls + legal_urls + [f"/sets/{s['slug']}/" for s in SETS]
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 LASTMOD = os.environ.get('LASTMOD', __import__('datetime').date.today().isoformat())
 sm += ''.join(f'  <url><loc>{SITE_URL}{u}</loc><lastmod>{LASTMOD}</lastmod></url>\n' for u in urls) + '</urlset>\n'

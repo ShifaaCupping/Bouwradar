@@ -10,9 +10,18 @@
   const favs = new Set(store.get('br-favs', store.get('sr-favs', [])));
   const saveFavs = () => store.set('br-favs', [...favs]);
 
+  // Affiliate-sjablonen komen uit data/site.json (via assets/config.js). Leeg = gewone link.
+  const AFF = window.BR_AFF || {};
+  const KEYS = { 'LEGO.com': 'lego', 'bol': 'bol', 'Intertoys': 'intertoys', 'Amazon.nl': 'amazon', 'Marktplaats': 'marktplaats' };
+  function wrap(label, href) {
+    const tpl = AFF[KEYS[label]];
+    return tpl ? tpl.replace('{url}', encodeURIComponent(href)).replace('{raw}', href) : href;
+  }
   function shopLinks(n) {
     const q = encodeURIComponent('lego ' + n);
-    // Vervang deze links door je affiliate-links zodra je bent goedgekeurd.
+    return rawLinks(n, q).map(([label, href]) => [label, wrap(label, href)]);
+  }
+  function rawLinks(n, q) {
     return [
       ['LEGO.com', 'https://www.lego.com/nl-nl/search?q=' + n],
       ['bol', 'https://www.bol.com/nl/nl/s/?searchtext=' + q],
@@ -73,12 +82,12 @@
       const sets = [...new Set([...favs, ...extra])];
       msg.textContent = 'Even geduld…';
       try {
-        const r = await fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, sets }) });
-        if (!r.ok) throw new Error();
+        const r = await fetch('/api/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, sets, consent: true, website: ($('#website') || {}).value || '' }) });
+        if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || 'fout'); }
         msg.textContent = sets.length ? 'Top! Je krijgt een seintje over ' + sets.length + (sets.length === 1 ? ' set.' : ' sets.') : 'Top! Je bent aangemeld. Tik op hartjes om je lijst te vullen.';
         form.reset();
       } catch (err) {
-        msg.textContent = 'Aanmelden lukt nu niet. Probeer het later opnieuw.';
+        msg.textContent = err.message === 'invalid_email' ? 'Dit e-mailadres lijkt niet te kloppen.' : 'Aanmelden lukt nu niet. Probeer het later opnieuw.';
       }
     });
   }

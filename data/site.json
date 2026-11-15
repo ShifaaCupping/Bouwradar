@@ -6,5 +6,13 @@
   "email": "info@shifaacupping.nl",
   "kvk": "42062209",
   "adres": "",
-  "btw_id": ""
+  "btw_id": "",
+  "affiliate": {
+    "_uitleg": "Vul per winkel je affiliate-link-sjabloon in zodra je bent goedgekeurd. {url} = doel-URL (gecodeerd), {raw} = doel-URL ongewijzigd. Leeg = gewone link.",
+    "bol": "",
+    "lego": "",
+    "intertoys": "",
+    "amazon": "",
+    "marktplaats": ""
+  }
 }

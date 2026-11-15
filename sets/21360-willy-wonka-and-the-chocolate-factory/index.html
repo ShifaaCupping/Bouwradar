@@ -54,7 +54,7 @@
       <div><span>Laagste prijs nu</span><b class="note">Vergelijk hieronder</b></div>
     </div>
     <p class="facts">Qua aantal stenen staat deze set op plek 6 van de 8 Ideas-sets die eind 2026 stoppen. Met 10,9 cent per steen is hij 9% duurder per steen dan gemiddeld in Ideas.</p>
-    <p class="datanote">Stopdatum en adviesprijs komen uit openbare bronnen en kunnen veranderen. De actuele prijs zie je bij de winkel zelf.</p>
+    <p class="datanote">Stopdatum bevestigd door twee onafhankelijke bronnen (<a href="/uitleg/#bronnen">Brick Fanatics en The Brick Observer</a>), gecontroleerd op 15 november 2026. LEGO kan de datum nog aanpassen. De actuele prijs zie je bij de winkel zelf.</p>
     <button class="favbtn" id="favbtn" data-set="21360" aria-pressed="false">♡ Zet op mijn lijst</button>
   </section>
 
@@ -68,7 +68,8 @@
     <h2>Seintje voordat LEGO 21360 verdwijnt</h2>
     <p>Wij mailen je als de stopdatum van deze set nadert of verandert. Geen spam, altijd afmelden.</p>
     <form id="form" data-set="21360" novalidate>
-      <input type="email" id="email" placeholder="jouw@email.nl" aria-label="E-mailadres" autocomplete="email" required>
+      <input type="email" id="email" placeholder="jouw@email.nl" aria-label="E-mailadres" autocomplete="email" maxlength="254" required>
+      <input type="text" id="website" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       <button type="submit">Meld mij aan</button>
     </form>
     <label class="consent"><input type="checkbox" id="ok" required> <span>Ik ga akkoord dat Steenradar mijn e-mailadres en mijn lijstje bewaart om mij meldingen te sturen (zie de <a href="/privacy/">privacyverklaring</a>).</span></label>
@@ -117,7 +118,7 @@
 </main>
 <footer>
   <div class="wrap">
-    <nav aria-label="Voettekst"><a href="/">Alle sets</a><a href="/#meldingen">Meldingen</a><a href="/uitleg/">Uitleg</a><a href="/privacy/">Privacy</a></nav>
+    <nav aria-label="Voettekst"><a href="/">Alle sets</a><a href="/#meldingen">Meldingen</a><a href="/uitleg/">Uitleg</a><a href="/gids/wanneer-stopt-een-lego-set/">Wanneer stopt een set?</a><a href="/privacy/">Privacy</a></nav>
     <nav class="foot-themes" aria-label="Thema's"><a href="/thema/architecture/">LEGO Architecture</a><a href="/thema/art/">LEGO Art</a><a href="/thema/botanicals/">LEGO Botanicals</a><a href="/thema/city/">LEGO City</a><a href="/thema/disney/">LEGO Disney</a><a href="/thema/harry-potter/">LEGO Harry Potter</a><a href="/thema/icons/">LEGO Icons</a><a href="/thema/ideas/">LEGO Ideas</a><a href="/thema/marvel/">LEGO Marvel</a><a href="/thema/speed-champions/">LEGO Speed Champions</a><a href="/thema/star-wars/">LEGO Star Wars</a><a href="/thema/technic/">LEGO Technic</a></nav>
     <p>Prijzen vergelijken op Steenradar is gratis. Als je via een winkellink iets koopt, kunnen wij een kleine commissie krijgen; jij betaalt niets extra. De volgorde van sets en winkels hangt daar niet van af.</p>
     <p>Stopdata en adviesprijzen zijn verwachtingen op basis van openbare bronnen en kunnen veranderen. Controleer altijd de prijs bij de winkel.</p>
@@ -127,6 +128,7 @@
 </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <nav class="bottomnav" aria-label="Menu"><a href="/" aria-current="page"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8V5h4v3M13 8V5h4v3"/></svg><span>Sets</span></a><a href="/#mijn-lijst"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Mijn lijst</span></a><a href="/#meldingen"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></svg><span>Meldingen</span></a><a href="/uitleg/"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17.5v.01"/></svg><span>Uitleg</span></a></nav>
+<script src="/assets/config.js"></script>
 <script src="/assets/app.js"></script>
 <script>
 (function(){var el=document.getElementById('shops');BR.shopLinks(el.dataset.set).forEach(function(x){var a=document.createElement('a');a.className='shop';a.href=x[1];a.target='_blank';a.rel='noopener nofollow sponsored';a.textContent=x[0];el.appendChild(a);});})();

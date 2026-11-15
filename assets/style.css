@@ -168,6 +168,7 @@ main{padding:16px 0 36px}
 .insight b{display:block;font-size:19px;margin-top:2px;font-weight:800;font-variant-numeric:tabular-nums}
 .insight .note{font-size:14.5px;font-weight:700}
 .datanote{font-size:13px;color:var(--muted);margin:12px 0 0;max-width:70ch}
+.datanote a,.faq p a{color:var(--red-dark);font-weight:600}
 section.block{margin-top:28px}
 section.block h2{font-size:21px;margin:0 0 12px;font-weight:800}
 .shopgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -217,3 +218,7 @@ footer nav a{color:var(--ink);font-weight:700;text-decoration:none;padding:6px 0
 .foot-themes{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0 0 16px}
 .foot-themes a{color:var(--muted);text-decoration:none;padding:6px 0;font-size:13px}
 .foot-themes a:hover{color:var(--ink);text-decoration:underline}
+
+.hp{position:absolute;left:-10000px;width:1px;height:1px;opacity:0}
+.section-head p a{color:var(--red-dark);font-weight:600}
+.legal .themelinks a{color:var(--ink)}

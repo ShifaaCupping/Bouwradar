@@ -33,3 +33,12 @@ Aanmeldingen bekijken: D1 → Console → `SELECT * FROM subscribers;`
 - Meld je aan bij het bol partnerprogramma en vervang de bol-links door je affiliate-links. Doe hetzelfde bij Amazon.nl als je wilt.
 - Controleer de stopdata: ze zijn verwachtingen en kunnen veranderen.
 - Gebruik geen LEGO-logo of officiële productfoto's, en noem de site niet "LEGO-iets".
+
+## Nieuw (november 2026)
+- **Stopdata gecontroleerd** met twee bronnen (Brick Fanatics en The Brick Observer). In `data/sets.json` betekent `"v":1` bevestigd door beide, `"v":0` maar één bron.
+- **Afmelden**: `functions/api/unsubscribe.js`. Zet in elke mail `https://<domein>/api/unsubscribe?token=<token>`.
+- **Had je de tabel al aangemaakt?** Draai dan eenmalig `migrations/002_token_consent.sql` in de D1-console.
+- **Beveiliging en caching**: `_headers` (Cloudflare Pages leest dit automatisch).
+- **Affiliate-links**: vul in `data/site.json` onder `affiliate` per winkel een sjabloon in, bijv. Amazon `{raw}&tag=jouwtag-21`. Daarna `python3 tools/build.py`.
+- **Controle**: `python3 tools/check.py` test alle links, titels, H1's, JSON-LD en de sitemap.
+- **Gids**: `/gids/wanneer-stopt-een-lego-set/`.
