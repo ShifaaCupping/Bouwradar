@@ -32,7 +32,8 @@ e = html.escape
 
 SETS = json.loads((ROOT / 'data/sets.json').read_text())
 SITE = json.loads((ROOT / 'data/site.json').read_text())
-LEGAL_OK = all(SITE.get(k, '').strip() for k in ('eigenaar', 'email', 'kvk', 'adres'))
+LEGAL_OK = bool((SITE.get('bedrijfsnaam', '') or SITE.get('eigenaar', '')).strip()) and all(SITE.get(k, '').strip() for k in ('email', 'kvk'))
+CONTACT_OK = LEGAL_OK and bool(SITE.get('adres', '').strip())
 for s in SETS:
     s['slug'] = f"{s['n']}-{slugify(s['name'])}"
 
@@ -174,13 +175,13 @@ def alert_block(set_n=None, set_name=None):
       <input type="email" id="email" placeholder="jouw@email.nl" aria-label="E-mailadres" autocomplete="email" required>
       <button type="submit">Meld mij aan</button>
     </form>
-    <label class="consent"><input type="checkbox" id="ok" required> Ik ga akkoord dat Steenradar mijn e-mailadres en mijn lijstje bewaart om mij meldingen te sturen{PRIVACY_LINK}.</label>
+    <label class="consent"><input type="checkbox" id="ok" required> <span>Ik ga akkoord dat Steenradar mijn e-mailadres en mijn lijstje bewaart om mij meldingen te sturen{PRIVACY_LINK}.</span></label>
     <div class="msg" id="msg" role="status"></div>
   </section>
 '''
 
 FOOT_THEMES = ''.join(f'<a href="/thema/{slugify(t)}/">LEGO {e(t)}</a>' for t in sorted({x['t'] for x in SETS}))
-LEGAL_LINKS = '<a href="/privacy/">Privacy</a><a href="/contact/">Contact</a>' if LEGAL_OK else ''
+LEGAL_LINKS = ('<a href="/privacy/">Privacy</a>' if LEGAL_OK else '') + ('<a href="/contact/">Contact</a>' if CONTACT_OK else '')
 FOOTER = f'''<footer>
   <div class="wrap">
     <nav aria-label="Voettekst"><a href="/">Alle sets</a><a href="/#meldingen">Meldingen</a><a href="/uitleg/">Uitleg</a>{LEGAL_LINKS}</nav>
@@ -463,14 +464,16 @@ notfound += topbar('') + f'''<section class="hero"><div class="wrap"><h1>Deze pa
 # ---------- Privacy + contact (alleen als data/site.json is ingevuld) ----------
 legal_urls = []
 if LEGAL_OK:
-    who = e(SITE['eigenaar']); mail = e(SITE['email']); kvk = e(SITE['kvk']); adres = e(SITE['adres'])
+    bedrijf = SITE.get('bedrijfsnaam', '').strip(); eig = SITE.get('eigenaar', '').strip()
+    who = e(f'{bedrijf} ({eig})' if bedrijf and eig else (bedrijf or eig))
+    mail = e(SITE['email']); kvk = e(SITE['kvk']); adres = e(SITE.get('adres', ''))
     btw = f'<p><b>Btw-identificatienummer:</b> {e(SITE["btw_id"])}</p>' if SITE.get('btw_id', '').strip() else ''
     privacy = head('Privacyverklaring | Steenradar', 'Welke gegevens Steenradar verwerkt, waarom, en wat je rechten zijn.', '/privacy/')
     privacy += topbar('') + f'''<section class="hero"><div class="wrap"><h1>Privacyverklaring</h1>
   <p class="lede">Steenradar verzamelt zo weinig mogelijk. Hier lees je wat we bewaren, waarom, en hoe je het laat verwijderen.</p></div></section>
 <main class="wrap legal">
   <h2>Wie is verantwoordelijk?</h2>
-  <p>Steenradar is een handelsnaam van {who}, ingeschreven bij de KVK onder nummer {kvk}. Vragen over privacy stuur je naar <a href="mailto:{mail}">{mail}</a>.</p>
+  <p>Steenradar is een website van {who}, ingeschreven bij de KVK onder nummer {kvk}. Dit bedrijf is verantwoordelijk voor de verwerking van je gegevens. Vragen over privacy stuur je naar <a href="mailto:{mail}">{mail}</a>.</p>
   <h2>Welke gegevens en waarom</h2>
   <p><b>Meldingen.</b> Meld je je aan voor een seintje, dan bewaren we je e-mailadres en de setnummers op je lijst. We gebruiken die alleen om je te mailen als de stopdatum van die sets nadert of verandert. De grondslag is je toestemming, die je geeft met het vinkje bij het formulier.</p>
   <p><b>Mijn lijst.</b> De sets die je met een hartje bewaart, staan alleen in je eigen browser (localStorage). Wij kunnen die niet zien, tenzij je je aanmeldt voor meldingen.</p>
@@ -493,16 +496,20 @@ if LEGAL_OK:
 <main class="wrap legal">
   <p><b>E-mail:</b> <a href="mailto:{mail}">{mail}</a></p>
   <p><b>Handelsnaam:</b> Steenradar</p>
-  <p><b>Eigenaar:</b> {who}</p>
+  <p><b>Bedrijf:</b> {who}</p>
   <p><b>Adres:</b> {adres}</p>
   <p><b>KVK-nummer:</b> {kvk}</p>
   {btw}
 </main>
 ''' + FOOTER + bottomnav('') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
-    write('/contact/', contact)
-    legal_urls = ['/privacy/', '/contact/']
+    legal_urls = ['/privacy/']
+    if CONTACT_OK:
+        write('/contact/', contact)
+        legal_urls.append('/contact/')
 else:
     print('Let op: data/site.json is nog niet ingevuld, dus privacy- en contactpagina zijn overgeslagen.')
+if LEGAL_OK and not CONTACT_OK:
+    print('Let op: geen adres in data/site.json, dus de contactpagina is overgeslagen.')
 
 # ---------- Sitemap + robots ----------
 urls = ['/', '/uitleg/'] + theme_urls + legal_urls + [f"/sets/{s['slug']}/" for s in SETS]

@@ -66,7 +66,13 @@
 
   <section class="alert" id="meldingen">
     <h2>Seintje voordat LEGO 43272 verdwijnt</h2>
-    <p>Meldingen per e-mail komen binnenkort. Zet je sets alvast met het hartje op je lijst; die blijft bewaard in je browser.</p>
+    <p>Wij mailen je als de stopdatum van deze set nadert of verandert. Geen spam, altijd afmelden.</p>
+    <form id="form" data-set="43272" novalidate>
+      <input type="email" id="email" placeholder="jouw@email.nl" aria-label="E-mailadres" autocomplete="email" required>
+      <button type="submit">Meld mij aan</button>
+    </form>
+    <label class="consent"><input type="checkbox" id="ok" required> <span>Ik ga akkoord dat Steenradar mijn e-mailadres en mijn lijstje bewaart om mij meldingen te sturen (zie de <a href="/privacy/">privacyverklaring</a>).</span></label>
+    <div class="msg" id="msg" role="status"></div>
   </section>
 
 
@@ -111,7 +117,7 @@
 </main>
 <footer>
   <div class="wrap">
-    <nav aria-label="Voettekst"><a href="/">Alle sets</a><a href="/#meldingen">Meldingen</a><a href="/uitleg/">Uitleg</a></nav>
+    <nav aria-label="Voettekst"><a href="/">Alle sets</a><a href="/#meldingen">Meldingen</a><a href="/uitleg/">Uitleg</a><a href="/privacy/">Privacy</a></nav>
     <nav class="foot-themes" aria-label="Thema's"><a href="/thema/architecture/">LEGO Architecture</a><a href="/thema/art/">LEGO Art</a><a href="/thema/botanicals/">LEGO Botanicals</a><a href="/thema/city/">LEGO City</a><a href="/thema/disney/">LEGO Disney</a><a href="/thema/harry-potter/">LEGO Harry Potter</a><a href="/thema/icons/">LEGO Icons</a><a href="/thema/ideas/">LEGO Ideas</a><a href="/thema/marvel/">LEGO Marvel</a><a href="/thema/speed-champions/">LEGO Speed Champions</a><a href="/thema/star-wars/">LEGO Star Wars</a><a href="/thema/technic/">LEGO Technic</a></nav>
     <p>Prijzen vergelijken op Steenradar is gratis. Als je via een winkellink iets koopt, kunnen wij een kleine commissie krijgen; jij betaalt niets extra. De volgorde van sets en winkels hangt daar niet van af.</p>
     <p>Stopdata en adviesprijzen zijn verwachtingen op basis van openbare bronnen en kunnen veranderen. Controleer altijd de prijs bij de winkel.</p>

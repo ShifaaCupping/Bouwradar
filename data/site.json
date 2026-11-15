@@ -1,8 +1,9 @@
 {
-  "_uitleg": "Vul dit in en draai daarna: python3 tools/build.py. Zolang naam, e-mail, KVK-nummer of adres leeg is, worden de privacy- en contactpagina niet gemaakt.",
+  "_uitleg": "Vul dit in en draai daarna: python3 tools/build.py. Privacyverklaring + aanmeldformulier verschijnen zodra bedrijfsnaam, e-mail en KVK-nummer zijn ingevuld; de contactpagina pas als ook het adres is ingevuld.",
   "handelsnaam": "Steenradar",
+  "bedrijfsnaam": "Shifaacupping",
   "eigenaar": "",
-  "email": "",
+  "email": "info@shifaacupping.nl",
   "kvk": "42062209",
   "adres": "",
   "btw_id": ""
