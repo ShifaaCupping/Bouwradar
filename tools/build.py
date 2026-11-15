@@ -12,9 +12,9 @@ STOP_DATE = '31 december 2026'
 ROOT = Path(__file__).resolve().parent.parent
 
 THEME_COLORS = {
-    'Star Wars': '#1b1b1f', 'Icons': '#7a4b2a', 'Ideas': '#0a7cc1', 'Technic': '#4b4f56',
-    'Harry Potter': '#6b2c3e', 'Marvel': '#b0151d', 'Architecture': '#8a8070', 'Art': '#d65a1f',
-    'Botanicals': '#2f7d4a', 'Speed Champions': '#c4161c', 'City': '#0f6fb6', 'Disney': '#3a4fb0'
+    'Star Wars': '#1b2a34', 'Icons': '#582a12', 'Ideas': '#36aebf', 'Technic': '#6c6e68',
+    'Harry Potter': '#720e0f', 'Marvel': '#c91a09', 'Architecture': '#a0bcac', 'Art': '#fe8a18',
+    'Botanicals': '#4b9f4a', 'Speed Champions': '#f2cd37', 'City': '#0055bf', 'Disney': '#81007b'
 }
 
 def slugify(s):
@@ -40,14 +40,31 @@ IMAGES = json.loads(IMAGES_FILE.read_text()) if IMAGES_FILE.exists() else {}
 for s in SETS:
     s['img'] = IMAGES.get(s['n'], '')
 
-def thumb(s, color, link=True):
+def shade(hexc, amt):
+    n = int(hexc[1:], 16); r, g, b = n >> 16, (n >> 8) & 255, n & 255
+    t = 0 if amt < 0 else 255; p = abs(amt)
+    r, g, b = (round((t - c) * p + c) for c in (r, g, b))
+    return f'#{r:02x}{g:02x}{b:02x}'
+
+def brick_svg(color, pieces):
+    layers = 1 if pieces < 1500 else 2 if pieces < 3000 else 3
+    studs = 2 if pieces < 500 else 4
+    W = 64 if studs == 2 else 112; x0 = (120 - W) / 2; h = 26; top = 100 - layers * h
+    dark, light = shade(color, -0.28), shade(color, 0.22)
+    out = '<svg viewBox="0 0 120 104" aria-hidden="true">'
+    pitch = W / studs
+    for i in range(studs):
+        sx = x0 + pitch * i + pitch / 2 - 8
+        out += f'<rect x="{sx:g}" y="{top-8}" width="16" height="10" rx="2.5" fill="{color}"/><rect x="{sx:g}" y="{top-8}" width="16" height="3.5" rx="1.75" fill="{light}"/>'
+    for l in range(layers):
+        y = top + l * h
+        out += f'<rect x="{x0:g}" y="{y}" width="{W}" height="{h}" rx="4" fill="{color}"/><rect x="{x0:g}" y="{y+h-5}" width="{W}" height="5" rx="2.5" fill="{dark}"/><rect x="{x0+4:g}" y="{y+3}" width="{W-8}" height="3" rx="1.5" fill="{light}" opacity=".7"/>'
+    return out + '</svg>'
+
+def thumb(s, color):
     inner = (f'<img src="{e(s["img"])}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">'
-             if s['img'] else s['n'])
-    cls = 'tile has-img' if s['img'] else 'tile'
-    style = '' if s['img'] else f' style="background:{color}"'
-    if link:
-        return f'<a class="{cls}" href="/sets/{s["slug"]}/"{style} aria-hidden="true" tabindex="-1">{inner}</a>'
-    return f'<div class="{cls}"{style} aria-hidden="true">{inner}</div>'
+             if s['img'] else brick_svg(color, s['pc']))
+    return f'<a class="thumb" href="/sets/{s["slug"]}/" aria-hidden="true" tabindex="-1">{inner}</a>'
 
 ICONS = {
     'sets': '<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8V5h4v3M13 8V5h4v3"/></svg>',
@@ -70,6 +87,8 @@ def head(title, desc, path, extra=''):
 <meta property="og:url" content="{SITE_URL}{path}">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#d01012">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&display=swap">
 <link rel="stylesheet" href="/assets/style.css">
 {extra}</head>
 <body>
@@ -139,32 +158,40 @@ for n in POP:
     f = next((x for x in SETS if x['n'] == n), None)
     if not f: continue
     col = THEME_COLORS.get(f['t'], '#444')
-    ph = f'<img src="{e(f["img"])}" alt="" loading="lazy" referrerpolicy="no-referrer">' if f['img'] else f['n']
-    style = '' if f['img'] else f' style="background:{col}"'
-    FEATURED += f'<a class="feat" href="/sets/{f["slug"]}/"><div class="ph"{style}>{ph}</div><span class="badge">Stopt 31 dec</span><b>{e(f["name"])}</b><span>{e(f["t"])} · {eur(f["p"])}</span></a>'
+    ph = f'<img src="{e(f["img"])}" alt="" loading="lazy" referrerpolicy="no-referrer">' if f['img'] else brick_svg(col, f['pc'])
+    FEATURED += f'<a class="feat" href="/sets/{f["slug"]}/"><div class="art">{ph}</div><b>{e(f["name"])}</b><span class="sub">{e(f["t"])}, {num(f["pc"])} stenen</span><span class="price">{eur(f["p"])}</span></a>'
+
+counts = sorted(((t, sum(1 for x in SETS if x['t'] == t)) for t in themes), key=lambda x: -x[1])
+CHART = ''
+for t, c in counts:
+    col = THEME_COLORS.get(t, '#444')
+    studs = ''.join('<i class="stud"></i>' for _ in range(c))
+    CHART += f'<button class="srow" type="button" data-theme="{e(t)}" style="--c:{col}" aria-label="{e(t)}: {c} sets, toon deze sets"><span class="lbl">{e(t)}</span><span class="cnt">{c}</span><span class="studs" aria-hidden="true">{studs}</span></button>'
 
 index = head('Bouwradar — LEGO-sets die eind 2026 uit productie gaan',
              f'{len(SETS)} LEGO-sets die naar verwachting op {STOP_DATE} stoppen. Vergelijk prijzen bij Nederlandse winkels en krijg een seintje voordat je set verdwijnt.', '/')
 index += topbar('sets')
 index += f'''<section class="hero">
   <div class="wrap">
-    <span class="live"><i></i>Stopdatum: 31 dec 2026</span>
-    <h1>Mis nooit meer een LEGO-set die <em>verdwijnt</em></h1>
-    <p class="lede">Na de stopdatum wordt een set vaak flink duurder bij doorverkopers. Vergelijk nu de prijzen bij Nederlandse winkels en koop op tijd.</p>
-    <div class="ctas"><a class="cta primary" href="#alle-sets">Bekijk alle sets</a><a class="cta secondary" href="#meldingen">Zet een seintje</a></div>
-    <div class="herostats">
-      <div class="hs hot"><b data-days>–</b><span>dagen tot {STOP_DATE.replace(' 2026','')}</span></div>
-      <div class="hs"><b>{len(SETS)}</b><span>sets stoppen</span></div>
-      <div class="hs"><b>{len(themes)}</b><span>thema's</span></div>
+    <div class="hero-grid">
+      <div>
+        <h1>{len(SETS)} LEGO-sets stoppen op 31&nbsp;december</h1>
+        <p class="lede">Daarna lopen de prijzen bij doorverkopers vaak op. Je hebt nog <b data-days>–</b> dagen om ze voor de gewone prijs te kopen.</p>
+        <div class="ctas"><a class="cta primary" href="#alle-sets">Bekijk de sets</a><a class="cta secondary" href="#meldingen">Seintje instellen</a></div>
+      </div>
+      <div class="studchart">
+        <h2>Wat er verdwijnt, per thema</h2>
+        <p class="key">Elk nopje is één set. Tik op een thema om die sets te zien.</p>
+        {CHART}
+      </div>
     </div>
-    <ul class="points"><li><b>Stopdata</b> van alle sets op één plek</li><li><b>Vergelijken</b> bij 6 Nederlandse winkels</li><li><b>Eerlijk</b>: gratis, volgorde niet betaald</li></ul>
   </div>
 </section>
 
 <section class="wrap" aria-label="Uitgelicht">
-  <div class="section-head"><h2>Populair bij verzamelaars</h2><a href="#alle-sets">Alle sets →</a></div>
+  <div class="section-head"><h2>Populair bij verzamelaars</h2><p>De grote sets waar het snelst om gevochten wordt.</p></div>
   <div class="rail">{FEATURED}</div>
-  <div class="section-head" id="alle-sets"><h2>Alle sets die stoppen</h2></div>
+  <div class="section-head" id="alle-sets"><h2>Alle sets die stoppen</h2><p>Zoek, filter op thema of zet sets op je lijst.</p></div>
 </section>
 <div class="controls">
   <div class="wrap">
@@ -235,15 +262,19 @@ for s in SETS:
     page = head(title, desc, path, extra) + topbar('sets')
     page += f'''<section class="hero">
   <div class="wrap">
-    <nav class="crumbs" aria-label="Kruimelpad"><a href="/">Alle sets</a><span>›</span>{e(s['t'])}<span>›</span>{s['n']}</nav>
-    <h1>LEGO {s['n']} {e(name)}</h1>
-    <p class="summary">{e(s['t'])} · adviesprijs {eur(s['p'])} · {num(s['pc'])} stenen · stopt naar verwachting op {STOP_DATE}</p>
-    <span class="countchip">Nog <b data-days>–</b> dagen tot de stopdatum</span>
+    <nav class="crumbs" aria-label="Kruimelpad"><a href="/">Alle sets</a><span>/</span>{e(s['t'])}</nav>
+    <div class="set-hero">
+      <div>
+        <h1>LEGO {s['n']} {e(name)}</h1>
+        <p class="summary">{e(s['t'])}-set met {num(s['pc'])} stenen en een adviesprijs van {eur(s['p'])}. Stopt naar verwachting op {STOP_DATE}.</p>
+        <span class="countchip">Nog <b data-days>–</b> dagen</span>
+      </div>
+      <div class="set-art">{('<img src="' + e(s['img']) + '" alt="LEGO ' + s['n'] + ' ' + e(name) + '" decoding="async" referrerpolicy="no-referrer">') if s['img'] else brick_svg(color, s['pc'])}</div>
+    </div>
   </div>
 </section>
 <main class="wrap">
   <section class="panel" aria-labelledby="pi">
-    {('<figure class="hero-img"><img src="' + e(s['img']) + '" alt="LEGO ' + s['n'] + ' ' + e(name) + '" decoding="async" referrerpolicy="no-referrer"></figure>') if s['img'] else ''}
     <h2 id="pi">Prijsinzicht</h2>
     <div class="insight">
       <div><span>Adviesprijs</span><b>{eur(s['p'])}</b></div>
@@ -273,7 +304,7 @@ for s in SETS:
         for r in related:
             page += f'''      <article class="card"><div class="top">
         {thumb(r, color)}
-        <div class="title"><h3><a href="/sets/{r['slug']}/">{e(r['name'])}</a></h3><p>Adviesprijs {eur(r['p'])} · {num(r['pc'])} stenen</p></div>
+        <div class="title"><h3><a href="/sets/{r['slug']}/">{e(r['name'])}</a></h3><p>{num(r['pc'])} stenen, adviesprijs {eur(r['p'])}</p></div>
       </div></article>
 '''
         page += '    </div>\n  </section>\n'

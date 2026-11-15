@@ -1,6 +1,6 @@
 // Overzichtspagina: zoeken, filteren, sorteren en 'Mijn lijst'
 (function () {
-  const { $, favs, saveFavs, shopLinks, toast } = window.BR;
+  const { $, favs, saveFavs, shopLinks, toast, brickSvg } = window.BR;
   const SETS = window.SETS || [];
   const THEME_COLORS = window.THEME_COLORS || {};
   const POP = ['75192','10326','21323','75367','75397','21333','76437','43263','10335','21360','76294','10341','21356','21353','42171','10337','75382','21351','42177'];
@@ -57,22 +57,23 @@
       const color = THEME_COLORS[s.t] || '#444';
       const ppp = (s.p / s.pc * 100).toFixed(1).replace('.', ',');
       const url = '/sets/' + s.slug + '/';
+      const thumb = s.img
+        ? `<a class="thumb" href="${url}" aria-hidden="true" tabindex="-1"><img src="${s.img}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></a>`
+        : `<a class="thumb" href="${url}" aria-hidden="true" tabindex="-1">${brickSvg(color, s.pc)}</a>`;
       c.innerHTML = `
         <div class="top">
-          ${s.img
-            ? `<a class="tile has-img" href="${url}" aria-hidden="true" tabindex="-1"><img src="${s.img}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></a>`
-            : `<a class="tile" href="${url}" style="background:${color}" aria-hidden="true" tabindex="-1">${s.n}</a>`}
-          <div class="title"><h3><a href="${url}"></a></h3><p>${s.t} · set ${s.n}</p></div>
+          ${thumb}
+          <div class="title"><h3><a href="${url}"></a></h3><p>${s.t}, set ${s.n}</p></div>
           <button class="heart" aria-label="Zet op mijn lijst" aria-pressed="${favs.has(s.n)}">${favs.has(s.n) ? '♥' : '♡'}</button>
         </div>
-        <div class="stats">
-          <span class="stat big">Adviesprijs <b>${fmt(s.p)}</b></span>
-          <span class="stat"><b>${fmtN(s.pc)}</b> stenen</span>
-          <span class="stat"><b>${ppp} ct</b> per steen</span>
+        <div class="figs">
+          <div><span>Adviesprijs</span><b>${fmt(s.p)}</b></div>
+          <div><span>Stenen</span><b>${fmtN(s.pc)}</b></div>
+          <div><span>Per steen</span><b>${ppp} ct</b></div>
         </div>
         <div class="actions">
           <a class="btn ghost" href="${url}">Prijsinzicht</a>
-          <button class="btn compare" aria-expanded="false">Vergelijk</button>
+          <button class="btn compare" aria-expanded="false">Vergelijk prijzen</button>
         </div>
         <div class="shops"></div>`;
       c.querySelector('h3 a').textContent = s.name;
@@ -82,7 +83,7 @@
         shops.appendChild(a);
       });
       const cmp = c.querySelector('.compare');
-      cmp.onclick = () => { const o = c.classList.toggle('open'); cmp.setAttribute('aria-expanded', o); cmp.textContent = o ? 'Sluiten' : 'Vergelijk'; };
+      cmp.onclick = () => { const o = c.classList.toggle('open'); cmp.setAttribute('aria-expanded', o); cmp.textContent = o ? 'Sluiten' : 'Vergelijk prijzen'; };
       const h = c.querySelector('.heart');
       h.onclick = () => {
         if (favs.has(s.n)) { favs.delete(s.n); toast('Verwijderd van je lijst'); }
@@ -101,5 +102,9 @@
   window.addEventListener('hashchange', () => {
     if (location.hash === '#mijn-lijst') { state.onlyFavs = true; renderChips(); render(); $('#chips').scrollIntoView({ block: 'start' }); }
   });
+  document.querySelectorAll('[data-theme]').forEach(b => b.addEventListener('click', () => {
+    state.theme = b.dataset.theme; state.onlyFavs = false; renderChips(); render();
+    document.getElementById('alle-sets').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  }));
   renderChips(); render();
 })();
