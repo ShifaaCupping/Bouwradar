@@ -78,10 +78,12 @@
         <div class="shops"></div>`;
       c.querySelector('h3 a').textContent = s.name;
       const shops = c.querySelector('.shops');
+      const note = document.createElement('p'); note.className = 'shopnote'; note.textContent = 'Je gaat naar de website van de winkel en bestelt daar.';
       shopLinks(s.n).forEach(([label, href]) => {
         const a = document.createElement('a'); a.className = 'shop'; a.href = href; a.target = '_blank'; a.rel = 'noopener nofollow sponsored'; a.textContent = label;
         shops.appendChild(a);
       });
+      shops.appendChild(note);
       const cmp = c.querySelector('.compare');
       cmp.onclick = () => { const o = c.classList.toggle('open'); cmp.setAttribute('aria-expanded', o); cmp.textContent = o ? 'Sluiten' : 'Vergelijk prijzen'; };
       const h = c.querySelector('.heart');

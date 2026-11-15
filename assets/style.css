@@ -122,6 +122,7 @@ main{padding:16px 0 36px}
 .card.open .shops{display:grid}
 .shop{display:flex;align-items:center;justify-content:center;height:46px;border-radius:var(--radius);border:1px solid var(--plate-line);text-decoration:none;font-size:14.5px;font-weight:700;background:#fff}
 .shop:hover{border-color:var(--soft)}
+.shopnote{grid-column:1 / -1;margin:0;font-size:12.5px;color:var(--muted)}
 .empty{text-align:center;color:var(--muted);padding:40px 10px;grid-column:1/-1}
 
 /* Seintje */
@@ -168,7 +169,7 @@ section.block{margin-top:28px}
 section.block h2{font-size:21px;margin:0 0 12px;font-weight:800}
 .shopgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(min-width:640px){.shopgrid{grid-template-columns:repeat(3,1fr)}}
-.shopgrid .shop:last-child:nth-child(odd),.shops .shop:last-child:nth-child(odd){grid-column:1 / -1}
+.shopgrid .shop:last-child:nth-child(odd),.shops .shop:nth-last-child(2):nth-child(odd){grid-column:1 / -1}
 @media(min-width:640px){.shopgrid .shop:last-child:nth-child(odd){grid-column:auto}}
 .shopgrid .shop{height:54px;font-size:15.5px;box-shadow:0 3px 0 var(--plate-line)}
 .favbtn{margin-top:14px;width:100%;height:50px;border-radius:var(--radius);border:1px solid var(--plate-line);background:#fff;font-weight:700;cursor:pointer;font-size:15.5px;box-shadow:0 3px 0 var(--plate-line)}

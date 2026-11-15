@@ -137,6 +137,7 @@ FOOTER = '''<footer>
     <p>Prijzen vergelijken op Bouwradar is gratis. Als je via een winkellink iets koopt, kunnen wij een kleine commissie krijgen; jij betaalt niets extra. De volgorde van sets en winkels hangt daar niet van af.</p>
     <p>Stopdata en adviesprijzen zijn verwachtingen op basis van openbare bronnen en kunnen veranderen. Controleer altijd de prijs bij de winkel.</p>
     <p>Bouwradar is een onafhankelijke site en is niet verbonden aan, gesponsord door of goedgekeurd door de LEGO Group. LEGO® is een handelsmerk van de LEGO Group.</p>
+    <p>Bouwradar is ook niet van bol of een andere winkel. De winkellinks sturen je door naar de website van die winkel, bijvoorbeeld bol; je bestelt en betaalt daar. Die winkels zijn niet verantwoordelijk voor Bouwradar.</p>
   </div>
 </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -290,6 +291,7 @@ for s in SETS:
 
   <section class="block">
     <h2>Vergelijk de prijs</h2>
+    <p class="datanote" style="margin:-4px 0 12px">Je gaat naar de website van de winkel en bestelt daar.</p>
     <div class="shopgrid" id="shops" data-set="{s['n']}"></div>
   </section>
 
@@ -342,7 +344,7 @@ uitleg += topbar('uitleg') + '''<section class="hero"><div class="wrap">
     <details><summary>Waar komen de stopdata vandaan?</summary><p>Uit openbare lijsten van LEGO-fans en -nieuwssites. Het zijn verwachtingen: LEGO kan een set eerder of later laten stoppen.</p></details>
     <details><summary>Hoe verdient Bouwradar geld?</summary><p>Als je via een winkellink iets koopt, kunnen wij een kleine commissie krijgen. Jij betaalt niets extra, en de volgorde van sets en winkels hangt daar niet van af.</p></details>
     <details><summary>Wat doen jullie met mijn e-mailadres?</summary><p>We gebruiken het alleen om je meldingen over je lijstje te sturen. Je kunt je altijd afmelden.</p></details>
-    <details><summary>Is Bouwradar van LEGO?</summary><p>Nee. Bouwradar is een onafhankelijke site en is niet verbonden aan de LEGO Group.</p></details>
+    <details><summary>Is Bouwradar van LEGO of van een winkel?</summary><p>Nee. Bouwradar is een onafhankelijke site en is niet verbonden aan de LEGO Group, bol of een andere winkel. Via de winkellinks ga je naar de website van de winkel en bestel je daar.</p></details>
   </section>
 ''' + alert_block() + '</main>\n' + FOOTER + bottomnav('uitleg') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
 write('/uitleg/', uitleg)
