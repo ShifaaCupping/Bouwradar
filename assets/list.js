@@ -59,7 +59,9 @@
       const url = '/sets/' + s.slug + '/';
       c.innerHTML = `
         <div class="top">
-          <a class="tile" href="${url}" style="background:${color}" aria-hidden="true" tabindex="-1">${s.n}</a>
+          ${s.img
+            ? `<a class="tile has-img" href="${url}" aria-hidden="true" tabindex="-1"><img src="${s.img}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></a>`
+            : `<a class="tile" href="${url}" style="background:${color}" aria-hidden="true" tabindex="-1">${s.n}</a>`}
           <div class="title"><h3><a href="${url}"></a></h3><p>${s.t} · set ${s.n}</p></div>
           <button class="heart" aria-label="Zet op mijn lijst" aria-pressed="${favs.has(s.n)}">${favs.has(s.n) ? '♥' : '♡'}</button>
         </div>

@@ -8,6 +8,7 @@ Nederlandse tracker voor LEGO-sets die eind 2026 uit productie gaan.
 - `uitleg/` — hoe het werkt + veelgestelde vragen
 - `assets/` — gedeelde CSS en JavaScript. De winkellinks staan in `assets/app.js` (`shopLinks`): zet hier later je affiliate-links.
 - `data/sets.json` — de setlijst. Pas je die aan, draai dan: `python3 tools/build.py`
+- `data/images.json` — productfoto's per setnummer, bijv. `{"75192": "https://...jpg"}`. Gebruik alleen foto's die je mag gebruiken (uit je bol- of LEGO-affiliatefeed). Daarna `python3 tools/build.py`.
 - `sitemap.xml` en `robots.txt` — voor Google Search Console
 
 **Eigen domein?** Draai `SITE_URL=https://jouwdomein.nl python3 tools/build.py`, dan kloppen de canonical-links en de sitemap.

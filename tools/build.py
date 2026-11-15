@@ -34,6 +34,21 @@ SETS = json.loads((ROOT / 'data/sets.json').read_text())
 for s in SETS:
     s['slug'] = f"{s['n']}-{slugify(s['name'])}"
 
+# Productfoto's: vul data/images.json met {"75192": "https://..."} uit je affiliate-productfeed
+IMAGES_FILE = ROOT / 'data/images.json'
+IMAGES = json.loads(IMAGES_FILE.read_text()) if IMAGES_FILE.exists() else {}
+for s in SETS:
+    s['img'] = IMAGES.get(s['n'], '')
+
+def thumb(s, color, link=True):
+    inner = (f'<img src="{e(s["img"])}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">'
+             if s['img'] else s['n'])
+    cls = 'tile has-img' if s['img'] else 'tile'
+    style = '' if s['img'] else f' style="background:{color}"'
+    if link:
+        return f'<a class="{cls}" href="/sets/{s["slug"]}/"{style} aria-hidden="true" tabindex="-1">{inner}</a>'
+    return f'<div class="{cls}"{style} aria-hidden="true">{inner}</div>'
+
 ICONS = {
     'sets': '<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8V5h4v3M13 8V5h4v3"/></svg>',
     'lijst': '<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>',
@@ -117,7 +132,7 @@ def write(path, content):
 
 # ---------- Overzicht ----------
 themes = sorted({s['t'] for s in SETS})
-list_data = json.dumps([{k: s[k] for k in ('t', 'n', 'name', 'p', 'pc', 'slug')} for s in SETS], ensure_ascii=False, separators=(',', ':'))
+list_data = json.dumps([{k: s[k] for k in ('t', 'n', 'name', 'p', 'pc', 'slug', 'img')} for s in SETS], ensure_ascii=False, separators=(',', ':'))
 index = head('Bouwradar — LEGO-sets die eind 2026 uit productie gaan',
              f'{len(SETS)} LEGO-sets die naar verwachting op {STOP_DATE} stoppen. Vergelijk prijzen bij Nederlandse winkels en krijg een seintje voordat je set verdwijnt.', '/')
 index += topbar('sets')
@@ -210,6 +225,7 @@ for s in SETS:
 </section>
 <main class="wrap">
   <section class="panel" aria-labelledby="pi">
+    {('<figure class="hero-img"><img src="' + e(s['img']) + '" alt="LEGO ' + s['n'] + ' ' + e(name) + '" decoding="async" referrerpolicy="no-referrer"></figure>') if s['img'] else ''}
     <h2 id="pi">Prijsinzicht</h2>
     <div class="insight">
       <div><span>Adviesprijs</span><b>{eur(s['p'])}</b></div>
@@ -238,7 +254,7 @@ for s in SETS:
 '''
         for r in related:
             page += f'''      <article class="card"><div class="top">
-        <a class="tile" href="/sets/{r['slug']}/" style="background:{color}" aria-hidden="true" tabindex="-1">{r['n']}</a>
+        {thumb(r, color)}
         <div class="title"><h3><a href="/sets/{r['slug']}/">{e(r['name'])}</a></h3><p>Adviesprijs {eur(r['p'])} · {num(r['pc'])} stenen</p></div>
       </div></article>
 '''
