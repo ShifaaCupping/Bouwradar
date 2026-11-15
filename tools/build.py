@@ -524,23 +524,38 @@ if LEGAL_OK:
     btw = f'<p><b>Btw-identificatienummer:</b> {e(SITE["btw_id"])}</p>' if SITE.get('btw_id', '').strip() else ''
     privacy = head('Privacyverklaring | Steenradar', 'Welke gegevens Steenradar verwerkt, waarom, en wat je rechten zijn.', '/privacy/')
     privacy += topbar('') + f'''<section class="hero"><div class="wrap"><h1>Privacyverklaring</h1>
-  <p class="lede">Steenradar verzamelt zo weinig mogelijk. Hier lees je wat we bewaren, waarom, en hoe je het laat verwijderen.</p></div></section>
+  <p class="lede">Steenradar verzamelt zo weinig mogelijk. Hier lees je wat we verwerken, waarom, hoe lang, en wat je rechten zijn.</p>
+  <p class="lede" style="font-size:14px;margin-top:-10px">Laatst bijgewerkt: 15 november 2026</p></div></section>
 <main class="wrap legal">
   <h2>Wie is verantwoordelijk?</h2>
-  <p>Steenradar is een website van {who}, ingeschreven bij de KVK onder nummer {kvk}. Dit bedrijf is verantwoordelijk voor de verwerking van je gegevens. Vragen over privacy stuur je naar <a href="mailto:{mail}">{mail}</a>.</p>
-  <h2>Welke gegevens en waarom</h2>
-  <p><b>Meldingen.</b> Meld je je aan voor een seintje, dan bewaren we je e-mailadres en de setnummers op je lijst. We gebruiken die alleen om je te mailen als de stopdatum van die sets nadert of verandert. De grondslag is je toestemming, die je geeft met het vinkje bij het formulier. We bewaren ook het moment waarop je die toestemming gaf. In elke mail staat een afmeldlink; daarmee worden je e-mailadres en lijst direct verwijderd.</p>
-  <p><b>Mijn lijst.</b> De sets die je met een hartje bewaart, staan alleen in je eigen browser (localStorage). Wij kunnen die niet zien, tenzij je je aanmeldt voor meldingen.</p>
-  <p><b>Bezoek aan de site.</b> De site draait bij Cloudflare. Cloudflare verwerkt technische gegevens zoals je IP-adres om de site te leveren en te beveiligen. Wij gebruiken geen analytische of tracking-cookies en laden geen lettertypes of scripts van Google of andere derden.</p>
-  <h2>Winkellinks</h2>
-  <p>Klik je op een winkellink, bijvoorbeeld naar bol, dan ga je naar de website van die winkel. Die winkel kan daar cookies plaatsen om bij te houden dat je via Steenradar kwam, zodat wij een kleine commissie krijgen als je iets koopt. Daarvoor geldt de privacyverklaring van die winkel.</p>
-  <h2>Hoe lang we gegevens bewaren</h2>
-  <p>Je e-mailadres en lijst bewaren we tot je je afmeldt. Meld je je af via de link in een mail, dan verwijderen we ze direct; via een verzoek per mail binnen 30 dagen.</p>
-  <h2>Met wie we gegevens delen</h2>
-  <p>We verkopen je gegevens niet. Cloudflare host de site en de database waarin aanmeldingen staan; zij verwerken die gegevens alleen voor ons.</p>
+  <p>Steenradar is een website van {who}, ingeschreven bij de KVK onder nummer {kvk}. Dit bedrijf is verantwoordelijk voor de verwerking van je gegevens. Vragen en verzoeken over privacy stuur je naar <a href="mailto:{mail}">{mail}</a>.</p>
+
+  <h2>Kort gezegd</h2>
+  <ul>
+    <li>Geen analytische, tracking- of advertentiecookies, en geen profilering.</li>
+    <li>De sets op "Mijn lijst" blijven in je eigen browser; wij zien ze niet.</li>
+    <li>We bewaren alleen je e-mailadres en sets als je je zelf aanmeldt voor meldingen.</li>
+    <li>We verkopen niets door en delen alleen met de dienst die de site draait.</li>
+  </ul>
+
+  <h2>Wat we verwerken</h2>
+  <p><b>Bezoek aan de site.</b> De site draait bij Cloudflare. Bij elk bezoek verwerkt Cloudflare technische gegevens, zoals je IP-adres en browsergegevens, om de site te leveren en te beveiligen. Grondslag: gerechtvaardigd belang (een werkende, veilige website). Wij gebruiken deze gegevens niet om jou te volgen.</p>
+  <p><b>Meldingen per e-mail.</b> Meld je je aan, dan bewaren we je e-mailadres, de setnummers op je lijst, het moment waarop je toestemming gaf en een afmeldcode. Doel: je mailen als de stopdatum van die sets nadert of verandert. Grondslag: je toestemming, die je geeft met het vinkje. Bewaartermijn: tot je je afmeldt. Via de afmeldlink in elke mail worden je gegevens direct verwijderd; via een verzoek per mail binnen 30 dagen.</p>
+  <p><b>Mijn lijst.</b> De sets die je met een hartje bewaart, staan alleen in de opslag van je eigen browser (localStorage). Ze worden niet naar ons verstuurd, tenzij je je aanmeldt voor meldingen. Je wist ze door de sitegegevens in je browser te verwijderen.</p>
+  <p><b>Contact per e-mail.</b> Mail je ons, dan gebruiken we je naam, e-mailadres en bericht om je te antwoorden. We bewaren dit tot je vraag is afgehandeld en daarna nog maximaal 12 maanden.</p>
+  <p><b>Doorklikken naar een winkel.</b> Klik je op een winkellink, bijvoorbeeld naar bol, dan ga je naar de website van die winkel. De winkel of een affiliatenetwerk kan daar cookies plaatsen om te zien dat je via Steenradar kwam; daarvoor geldt hun eigen privacyverklaring. Wij krijgen alleen te zien dat er een aankoop is gedaan en welke commissie daarbij hoort, niet wie jij bent.</p>
+
+  <h2>Diensten die we gebruiken</h2>
+  <p><b>Cloudflare</b> host de site, de database met aanmeldingen en de technische afhandeling van bezoeken. Cloudflare verwerkt die gegevens alleen in onze opdracht. Cloudflare is een Amerikaans bedrijf; doorgifte buiten de EU gebeurt op basis van het EU-VS Data Privacy Framework of de standaardcontractbepalingen van de Europese Commissie. We laden geen lettertypes, scripts of advertenties van Google, Meta of andere derden.</p>
+
+  <h2>Beveiliging</h2>
+  <p>De site werkt alleen via een versleutelde verbinding (https). De database en de beheeromgeving zijn alleen toegankelijk voor ons en afgeschermd met een eigen account. We bewaren niet meer gegevens dan nodig.</p>
+
   <h2>Jouw rechten</h2>
-  <p>Je kunt je gegevens inzien, laten aanpassen of laten verwijderen, en je toestemming altijd intrekken. Mail naar <a href="mailto:{mail}">{mail}</a>; we reageren binnen een maand. Ben je het niet eens met hoe we met je gegevens omgaan, dan kun je een klacht indienen bij de Autoriteit Persoonsgegevens.</p>
-  <p class="datanote">Laatst bijgewerkt: 15 november 2026</p>
+  <p>Je hebt het recht op inzage, correctie, verwijdering, beperking van de verwerking, bezwaar en overdraagbaarheid van je gegevens, en je kunt je toestemming altijd intrekken. Stuur je verzoek naar <a href="mailto:{mail}">{mail}</a>; we reageren binnen een maand. Ben je het niet eens met hoe we met je gegevens omgaan, dan kun je een klacht indienen bij de <a href="https://www.autoriteitpersoonsgegevens.nl" rel="noopener" target="_blank">Autoriteit Persoonsgegevens</a>.</p>
+
+  <h2>Wijzigingen</h2>
+  <p>Gaan we gegevens anders verwerken, bijvoorbeeld omdat we mails gaan versturen via een maildienst, dan passen we deze verklaring aan. De datum bovenaan laat zien wanneer dat voor het laatst gebeurde.</p>
 </main>
 ''' + FOOTER + bottomnav('') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
     write('/privacy/', privacy)

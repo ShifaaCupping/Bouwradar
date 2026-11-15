@@ -222,3 +222,5 @@ footer nav a{color:var(--ink);font-weight:700;text-decoration:none;padding:6px 0
 .hp{position:absolute;left:-10000px;width:1px;height:1px;opacity:0}
 .section-head p a{color:var(--red-dark);font-weight:600}
 .legal .themelinks a{color:var(--ink)}
+.legal ul{margin:0 0 12px;padding-left:20px}
+.legal li{margin:0 0 6px}
