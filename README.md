@@ -3,7 +3,14 @@
 Nederlandse tracker voor LEGO-sets die eind 2026 uit productie gaan.
 
 ## Wat erin zit
-- `index.html` — de hele site (mobile-first, geen build-stap). De setlijst staat bovenin het script als `SETS`.
+- `index.html` — overzicht van alle sets (zoeken, filteren, Mijn lijst)
+- `sets/<nummer>-<naam>/` — een eigen pagina per set met Prijsinzicht, winkellinks, melding en FAQ (goed voor Google)
+- `uitleg/` — hoe het werkt + veelgestelde vragen
+- `assets/` — gedeelde CSS en JavaScript. De winkellinks staan in `assets/app.js` (`shopLinks`): zet hier later je affiliate-links.
+- `data/sets.json` — de setlijst. Pas je die aan, draai dan: `python3 tools/build.py`
+- `sitemap.xml` en `robots.txt` — voor Google Search Console
+
+**Eigen domein?** Draai `SITE_URL=https://jouwdomein.nl python3 tools/build.py`, dan kloppen de canonical-links en de sitemap.
 - `functions/api/subscribe.js` — slaat aanmeldingen (e-mail + lijstje) op in Cloudflare D1.
 - `schema.sql` — de databasetabel.
 
