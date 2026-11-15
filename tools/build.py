@@ -69,7 +69,7 @@ def head(title, desc, path, extra=''):
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{SITE_URL}{path}">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#0d1b2a">
+<meta name="theme-color" content="#d01012">
 <link rel="stylesheet" href="/assets/style.css">
 {extra}</head>
 <body>
@@ -133,21 +133,39 @@ def write(path, content):
 # ---------- Overzicht ----------
 themes = sorted({s['t'] for s in SETS})
 list_data = json.dumps([{k: s[k] for k in ('t', 'n', 'name', 'p', 'pc', 'slug', 'img')} for s in SETS], ensure_ascii=False, separators=(',', ':'))
+POP = ['75192','10326','21323','75367','75397','21333','76437','43263','10335','21360']
+FEATURED = ''
+for n in POP:
+    f = next((x for x in SETS if x['n'] == n), None)
+    if not f: continue
+    col = THEME_COLORS.get(f['t'], '#444')
+    ph = f'<img src="{e(f["img"])}" alt="" loading="lazy" referrerpolicy="no-referrer">' if f['img'] else f['n']
+    style = '' if f['img'] else f' style="background:{col}"'
+    FEATURED += f'<a class="feat" href="/sets/{f["slug"]}/"><div class="ph"{style}>{ph}</div><span class="badge">Stopt 31 dec</span><b>{e(f["name"])}</b><span>{e(f["t"])} · {eur(f["p"])}</span></a>'
+
 index = head('Bouwradar — LEGO-sets die eind 2026 uit productie gaan',
              f'{len(SETS)} LEGO-sets die naar verwachting op {STOP_DATE} stoppen. Vergelijk prijzen bij Nederlandse winkels en krijg een seintje voordat je set verdwijnt.', '/')
 index += topbar('sets')
 index += f'''<section class="hero">
   <div class="wrap">
-    <h1>Deze LEGO-sets <em>verdwijnen</em> eind 2026</h1>
+    <span class="live"><i></i>Stopdatum: 31 dec 2026</span>
+    <h1>Mis nooit meer een LEGO-set die <em>verdwijnt</em></h1>
     <p class="lede">Na de stopdatum wordt een set vaak flink duurder bij doorverkopers. Vergelijk nu de prijzen bij Nederlandse winkels en koop op tijd.</p>
+    <div class="ctas"><a class="cta primary" href="#alle-sets">Bekijk alle sets</a><a class="cta secondary" href="#meldingen">Zet een seintje</a></div>
     <div class="herostats">
       <div class="hs hot"><b data-days>–</b><span>dagen tot {STOP_DATE.replace(' 2026','')}</span></div>
       <div class="hs"><b>{len(SETS)}</b><span>sets stoppen</span></div>
       <div class="hs"><b>{len(themes)}</b><span>thema's</span></div>
     </div>
+    <ul class="points"><li><b>Stopdata</b> van alle sets op één plek</li><li><b>Vergelijken</b> bij 6 Nederlandse winkels</li><li><b>Eerlijk</b>: gratis, volgorde niet betaald</li></ul>
   </div>
 </section>
 
+<section class="wrap" aria-label="Uitgelicht">
+  <div class="section-head"><h2>Populair bij verzamelaars</h2><a href="#alle-sets">Alle sets →</a></div>
+  <div class="rail">{FEATURED}</div>
+  <div class="section-head" id="alle-sets"><h2>Alle sets die stoppen</h2></div>
+</section>
 <div class="controls">
   <div class="wrap">
     <div class="row">
