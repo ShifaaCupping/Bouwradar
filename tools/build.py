@@ -216,7 +216,7 @@ index += f'''<section class="hero">
   {alert_block()}
   <section class="how">
     <div><b>1. Kies je sets</b>Tik op het hartje bij de sets die je nog wilt hebben.</div>
-    <div><b>2. Vergelijk prijzen</b>Bekijk in één tik de prijs bij LEGO, bol, Intertoys, Amazon en Tweakers.</div>
+    <div><b>2. Vergelijk prijzen</b>Bekijk in één tik de prijs bij LEGO.com, bol, Intertoys en Amazon.</div>
     <div><b>3. Krijg een seintje</b>Meld je aan en wij waarschuwen je voordat je set verdwijnt.</div>
   </section>
 </main>
@@ -244,7 +244,7 @@ for s in SETS:
     faq = [
         (f"Wanneer stopt LEGO {s['n']} {name}?", f"Naar verwachting gaat deze set op {STOP_DATE} uit productie. LEGO kan die datum nog veranderen, dus check het regelmatig."),
         (f"Wat is de adviesprijs van LEGO {s['n']}?", f"De adviesprijs is {eur(s['p'])} voor {num(s['pc'])} stenen, ofwel {ppp} cent per steen."),
-        (f"Waar koop ik LEGO {s['n']} het goedkoopst?", "Vergelijk de actuele prijs bij LEGO.com, bol, Intertoys, Amazon.nl en via Tweakers Pricewatch. Wacht je op korting? Meld je aan voor een seintje."),
+        (f"Waar koop ik LEGO {s['n']} het goedkoopst?", "Vergelijk de actuele prijs bij LEGO.com, bol, Intertoys en Amazon.nl, of zoek tweedehands op Marktplaats. Wacht je op korting? Meld je aan voor een seintje."),
         ("Wordt een set duurder na de stopdatum?", "Vaak wel: als winkels geen voorraad meer krijgen, stijgen de prijzen bij doorverkopers. Dat is niet gegarandeerd en verschilt per set."),
     ]
     ld = [

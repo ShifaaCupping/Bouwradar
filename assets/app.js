@@ -18,7 +18,6 @@
       ['bol', 'https://www.bol.com/nl/nl/s/?searchtext=' + q],
       ['Intertoys', 'https://www.intertoys.nl/search?q=' + q],
       ['Amazon.nl', 'https://www.amazon.nl/s?k=' + q],
-      ['Tweakers', 'https://tweakers.net/pricewatch/zoeken/?keyword=' + q],
       ['Marktplaats', 'https://www.marktplaats.nl/q/' + q + '/']
     ];
   }
