@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bouwt alle pagina's van Bouwradar uit data/sets.json.
+"""Bouwt alle pagina's van Steenradar uit data/sets.json.
 
 Gebruik:  python3 tools/build.py
 Pas SITE_URL aan naar je eigen domein en draai het script opnieuw.
@@ -100,7 +100,7 @@ def topbar(active):
     links = [('sets', '/', 'Alle sets'), ('lijst', '/#mijn-lijst', 'Mijn lijst'), ('meld', '/#meldingen', 'Meldingen'), ('uitleg', '/uitleg/', 'Uitleg')]
     nav = ''.join(f'<a href="{h}"{CUR if k == active else ""}>{t}</a>' for k, h, t in links)
     return f'''<header class="topbar"><div class="wrap">
-  <a class="brand" href="/"><span class="brick" aria-hidden="true"></span>Bouwradar</a>
+  <a class="brand" href="/"><span class="brick" aria-hidden="true"></span>Steenradar</a>
   <nav class="topnav" aria-label="Hoofdmenu">{nav}</nav>
 </div></header>
 '''
@@ -126,7 +126,7 @@ def alert_block(set_n=None, set_name=None):
       <input type="email" id="email" placeholder="jouw@email.nl" aria-label="E-mailadres" autocomplete="email" required>
       <button type="submit">Meld mij aan</button>
     </form>
-    <label class="consent"><input type="checkbox" id="ok" required> Ik ga akkoord dat Bouwradar mijn e-mailadres en mijn lijstje bewaart om mij meldingen te sturen.</label>
+    <label class="consent"><input type="checkbox" id="ok" required> Ik ga akkoord dat Steenradar mijn e-mailadres en mijn lijstje bewaart om mij meldingen te sturen.</label>
     <div class="msg" id="msg" role="status"></div>
   </section>
 '''
@@ -134,10 +134,10 @@ def alert_block(set_n=None, set_name=None):
 FOOTER = '''<footer>
   <div class="wrap">
     <nav aria-label="Voettekst"><a href="/">Alle sets</a><a href="/#meldingen">Meldingen</a><a href="/uitleg/">Uitleg</a></nav>
-    <p>Prijzen vergelijken op Bouwradar is gratis. Als je via een winkellink iets koopt, kunnen wij een kleine commissie krijgen; jij betaalt niets extra. De volgorde van sets en winkels hangt daar niet van af.</p>
+    <p>Prijzen vergelijken op Steenradar is gratis. Als je via een winkellink iets koopt, kunnen wij een kleine commissie krijgen; jij betaalt niets extra. De volgorde van sets en winkels hangt daar niet van af.</p>
     <p>Stopdata en adviesprijzen zijn verwachtingen op basis van openbare bronnen en kunnen veranderen. Controleer altijd de prijs bij de winkel.</p>
-    <p>Bouwradar is een onafhankelijke site en is niet verbonden aan, gesponsord door of goedgekeurd door de LEGO Group. LEGO® is een handelsmerk van de LEGO Group.</p>
-    <p>Bouwradar is ook niet van bol of een andere winkel. De winkellinks sturen je door naar de website van die winkel, bijvoorbeeld bol; je bestelt en betaalt daar. Die winkels zijn niet verantwoordelijk voor Bouwradar.</p>
+    <p>Steenradar is een onafhankelijke site en is niet verbonden aan, gesponsord door of goedgekeurd door de LEGO Group. LEGO® is een handelsmerk van de LEGO Group.</p>
+    <p>Steenradar is ook niet van bol of een andere winkel. De winkellinks sturen je door naar de website van die winkel, bijvoorbeeld bol; je bestelt en betaalt daar. Die winkels zijn niet verantwoordelijk voor Steenradar.</p>
   </div>
 </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -169,7 +169,7 @@ for t, c in counts:
     studs = ''.join('<i class="stud"></i>' for _ in range(c))
     CHART += f'<button class="srow" type="button" data-theme="{e(t)}" style="--c:{col}" aria-label="{e(t)}: {c} sets, toon deze sets"><span class="lbl">{e(t)}</span><span class="cnt">{c}</span><span class="studs" aria-hidden="true">{studs}</span></button>'
 
-index = head('Bouwradar — LEGO-sets die eind 2026 uit productie gaan',
+index = head('Steenradar — LEGO-sets die eind 2026 uit productie gaan',
              f'{len(SETS)} LEGO-sets die naar verwachting op {STOP_DATE} stoppen. Vergelijk prijzen bij Nederlandse winkels en krijg een seintje voordat je set verdwijnt.', '/')
 index += topbar('sets')
 index += f'''<section class="hero">
@@ -240,7 +240,7 @@ for s in SETS:
     path = f"/sets/{s['slug']}/"
     name = s['name']
     ppp = f"{s['p'] / s['pc'] * 100:.1f}".replace('.', ',')
-    title = f"LEGO {s['n']} {name} stopt eind 2026 – prijzen vergelijken | Bouwradar"
+    title = f"LEGO {s['n']} {name} stopt eind 2026 – prijzen vergelijken | Steenradar"
     desc = f"LEGO {s['t']} {s['n']} {name} gaat naar verwachting op {STOP_DATE} uit productie. Adviesprijs {eur(s['p'])}, {num(s['pc'])} stenen. Vergelijk prijzen bij bol, Intertoys, LEGO.com en meer."
     faq = [
         (f"Wanneer stopt LEGO {s['n']} {name}?", f"Naar verwachting gaat deze set op {STOP_DATE} uit productie. LEGO kan die datum nog veranderen, dus check het regelmatig."),
@@ -328,10 +328,10 @@ for s in SETS:
     write(path, page)
 
 # ---------- Uitleg ----------
-uitleg = head('Hoe werkt Bouwradar? | Uitleg', 'Hoe Bouwradar werkt: LEGO-sets die uit productie gaan, prijzen vergelijken bij Nederlandse winkels en meldingen.', '/uitleg/')
+uitleg = head('Hoe werkt Steenradar? | Uitleg', 'Hoe Steenradar werkt: LEGO-sets die uit productie gaan, prijzen vergelijken bij Nederlandse winkels en meldingen.', '/uitleg/')
 uitleg += topbar('uitleg') + '''<section class="hero"><div class="wrap">
-  <h1>Hoe werkt Bouwradar?</h1>
-  <p class="lede">Elke LEGO-set heeft een vaste levensduur. Bouwradar laat zien welke sets binnenkort stoppen, zodat je ze nog voor de normale prijs kunt kopen.</p>
+  <h1>Hoe werkt Steenradar?</h1>
+  <p class="lede">Elke LEGO-set heeft een vaste levensduur. Steenradar laat zien welke sets binnenkort stoppen, zodat je ze nog voor de normale prijs kunt kopen.</p>
 </div></section>
 <main class="wrap">
   <section class="how" style="margin-top:20px">
@@ -342,9 +342,9 @@ uitleg += topbar('uitleg') + '''<section class="hero"><div class="wrap">
   <section class="block faq">
     <h2>Veelgestelde vragen</h2>
     <details><summary>Waar komen de stopdata vandaan?</summary><p>Uit openbare lijsten van LEGO-fans en -nieuwssites. Het zijn verwachtingen: LEGO kan een set eerder of later laten stoppen.</p></details>
-    <details><summary>Hoe verdient Bouwradar geld?</summary><p>Als je via een winkellink iets koopt, kunnen wij een kleine commissie krijgen. Jij betaalt niets extra, en de volgorde van sets en winkels hangt daar niet van af.</p></details>
+    <details><summary>Hoe verdient Steenradar geld?</summary><p>Als je via een winkellink iets koopt, kunnen wij een kleine commissie krijgen. Jij betaalt niets extra, en de volgorde van sets en winkels hangt daar niet van af.</p></details>
     <details><summary>Wat doen jullie met mijn e-mailadres?</summary><p>We gebruiken het alleen om je meldingen over je lijstje te sturen. Je kunt je altijd afmelden.</p></details>
-    <details><summary>Is Bouwradar van LEGO of van een winkel?</summary><p>Nee. Bouwradar is een onafhankelijke site en is niet verbonden aan de LEGO Group, bol of een andere winkel. Via de winkellinks ga je naar de website van de winkel en bestel je daar.</p></details>
+    <details><summary>Is Steenradar van LEGO of van een winkel?</summary><p>Nee. Steenradar is een onafhankelijke site en is niet verbonden aan de LEGO Group, bol of een andere winkel. Via de winkellinks ga je naar de website van de winkel en bestel je daar.</p></details>
   </section>
 ''' + alert_block() + '</main>\n' + FOOTER + bottomnav('uitleg') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
 write('/uitleg/', uitleg)

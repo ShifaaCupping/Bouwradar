@@ -1,4 +1,4 @@
-# Bouwradar — v1
+# Steenradar — v1
 
 Nederlandse tracker voor LEGO-sets die eind 2026 uit productie gaan.
 

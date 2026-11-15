@@ -1,4 +1,4 @@
-// Gedeelde code voor alle pagina's van Bouwradar
+// Gedeelde code voor alle pagina's van Steenradar
 (function () {
   const END = new Date('2026-12-31T23:59:59+01:00');
   const $ = (s, el = document) => el.querySelector(s);
