@@ -121,6 +121,13 @@ def alert_block(set_n=None, set_name=None):
         p = 'Wij mailen je als de stopdatum van een set op je lijst nadert of verandert. Geen spam, altijd afmelden.'
         data = ''
     PRIVACY_LINK = ' (zie de <a href="/privacy/">privacyverklaring</a>)' if LEGAL_OK else ''
+    if not LEGAL_OK:
+        # Geen aanmeldingen verzamelen zolang de privacyverklaring nog niet online staat
+        return f'''<section class="alert" id="meldingen">
+    <h2>{h2}</h2>
+    <p>Meldingen per e-mail komen binnenkort. Zet je sets alvast met het hartje op je lijst; die blijft bewaard in je browser.</p>
+  </section>
+'''
     return f'''<section class="alert" id="meldingen">
     <h2>{h2}</h2>
     <p>{p}</p>
