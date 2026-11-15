@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bouwradar — LEGO-sets die bijna verdwijnen</title>
+<meta name="description" content="Overzicht van LEGO-sets die eind 2026 uit productie gaan. Vergelijk prijzen bij Nederlandse winkels en krijg een seintje voordat je favoriete set verdwijnt.">
+<meta name="theme-color" content="#1b1b1f">
+<style>
+:root{
+  --bg:#f6f4ef;--card:#fff;--ink:#1b1b1f;--muted:#6b6a70;--line:#e4e1d9;
+  --accent:#e3000b;--accent-ink:#fff;--yellow:#ffcf00;--ok:#1f8a4c;
+  --radius:14px;--shadow:0 1px 2px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.05);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+
+/* Hero */
+header.hero{background:var(--ink);color:#fff;padding:20px 0 26px;padding-top:max(20px,env(safe-area-inset-top))}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px;letter-spacing:-.01em}
+.brick{width:30px;height:22px;background:var(--yellow);border-radius:4px;position:relative;flex:none}
+.brick::before,.brick::after{content:"";position:absolute;top:-5px;width:8px;height:5px;background:var(--yellow);border-radius:2px 2px 0 0}
+.brick::before{left:5px}.brick::after{right:5px}
+h1{font-size:clamp(26px,6.4vw,42px);line-height:1.1;margin:18px 0 10px;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--yellow)}
+.lede{color:#cfcfd4;margin:0 0 18px;max-width:560px}
+.countdown{display:flex;gap:8px;flex-wrap:wrap}
+.cd{background:#2a2a30;border-radius:10px;padding:10px 12px;min-width:68px;text-align:center}
+.cd b{display:block;font-size:24px;font-variant-numeric:tabular-nums;line-height:1}
+.cd span{font-size:12px;color:#a9a9b0}
+.cd-label{font-size:13px;color:#a9a9b0;margin:0 0 8px}
+
+/* Controls */
+.controls{position:sticky;top:0;z-index:5;background:rgba(246,244,239,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:12px 0}
+.row{display:flex;gap:8px}
+.search{flex:1;min-width:0;height:46px;border:1px solid var(--line);border-radius:12px;padding:0 14px;background:#fff;font-size:16px}
+.sort{height:46px;border:1px solid var(--line);border-radius:12px;padding:0 10px;background:#fff;font-size:15px;max-width:44%}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:14px;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip.fav[aria-pressed="true"]{background:var(--accent);border-color:var(--accent)}
+.meta{font-size:13px;color:var(--muted);padding:10px 0 0}
+
+/* Grid */
+main{padding:16px 0 40px}
+.grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:980px){.grid{grid-template-columns:1fr 1fr 1fr}}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:10px}
+.top{display:flex;gap:12px;align-items:flex-start}
+.tile{flex:none;width:56px;height:56px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:12px;color:#fff;letter-spacing:.02em}
+.title{flex:1;min-width:0}
+.title h3{margin:0;font-size:16px;line-height:1.25}
+.title p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.heart{flex:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;font-size:20px;line-height:1}
+.heart[aria-pressed="true"]{background:#fff0f0;border-color:#ffc9c9;color:var(--accent)}
+.stats{display:flex;gap:6px;flex-wrap:wrap}
+.stat{font-size:13px;background:var(--bg);border-radius:8px;padding:5px 9px}
+.stat b{font-variant-numeric:tabular-nums}
+.big{font-size:15px}
+.shops{display:none;grid-template-columns:1fr 1fr;gap:8px}
+.card.open .shops{display:grid}
+.shop{display:flex;align-items:center;justify-content:center;height:44px;border-radius:10px;border:1px solid var(--line);text-decoration:none;font-size:14px;font-weight:600;background:#fff}
+.shop:active{background:var(--bg)}
+.compare{height:44px;border-radius:10px;border:0;background:var(--ink);color:#fff;font-weight:600;cursor:pointer;font-size:15px}
+.card.open .compare{background:var(--bg);color:var(--ink)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px;grid-column:1/-1}
+
+/* Alert box */
+.alert{background:var(--yellow);border-radius:var(--radius);padding:20px;margin:28px 0 0}
+.alert h2{margin:0 0 6px;font-size:22px;letter-spacing:-.01em}
+.alert p{margin:0 0 14px}
+.alert form{display:flex;flex-direction:column;gap:10px}
+@media(min-width:640px){.alert form{flex-direction:row}}
+.alert input[type=email]{flex:1;height:48px;border-radius:12px;border:0;padding:0 14px;font-size:16px}
+.alert button{height:48px;border-radius:12px;border:0;padding:0 20px;background:var(--ink);color:#fff;font-weight:700;cursor:pointer;font-size:16px}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:13px;margin-top:10px}
+.consent input{width:22px;height:22px;flex:none;margin:0}
+.msg{margin-top:10px;font-weight:600;font-size:14px;min-height:1em}
+
+/* Toast */
+.toast{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom));transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:12px 16px;border-radius:12px;font-size:14px;transition:transform .25s ease;z-index:20;max-width:calc(100% - 32px)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+footer{border-top:1px solid var(--line);padding:22px 0 calc(28px + env(safe-area-inset-bottom));font-size:12.5px;color:var(--muted)}
+footer p{margin:0 0 8px}
+.how{display:grid;gap:10px;margin:28px 0 0}
+@media(min-width:640px){.how{grid-template-columns:repeat(3,1fr)}}
+.how div{background:#fff;border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);font-size:14px}
+.how b{display:block;margin-bottom:4px;font-size:15px}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brand"><span class="brick" aria-hidden="true"></span>Bouwradar</div>
+    <h1>Deze LEGO-sets <em>verdwijnen</em> eind 2026</h1>
+    <p class="lede">Na de stopdatum wordt een set vaak flink duurder bij doorverkopers. Vergelijk nu de prijzen bij Nederlandse winkels en koop op tijd.</p>
+    <p class="cd-label">Verwachte stopdatum: 31 december 2026</p>
+    <div class="countdown" id="cd" aria-live="off">
+      <div class="cd"><b id="cd-d">–</b><span>dagen</span></div>
+      <div class="cd"><b id="cd-h">–</b><span>uur</span></div>
+      <div class="cd"><b id="cd-m">–</b><span>min</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="wrap">
+    <div class="row">
+      <input class="search" id="q" type="search" placeholder="Zoek naam of nummer" aria-label="Zoeken" autocomplete="off">
+      <select class="sort" id="sort" aria-label="Sorteren">
+        <option value="pop">Populair eerst</option>
+        <option value="price-asc">Prijs laag–hoog</option>
+        <option value="price-desc">Prijs hoog–laag</option>
+        <option value="ppp">Beste prijs per steen</option>
+        <option value="pieces">Meeste stenen</option>
+      </select>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filter op thema"></div>
+    <div class="meta" id="meta"></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="grid" id="grid"></div>
+
+  <section class="alert" id="alert">
+    <h2>Krijg een seintje op tijd</h2>
+    <p>Wij mailen je als een set op je lijstje bijna verdwijnt of ergens in de aanbieding is. Geen spam, altijd afmelden.</p>
+    <form id="form" novalidate>
+      <input type="email" id="email" placeholder="jouw@email.nl" aria-label="E-mailadres" autocomplete="email" required>
+      <button type="submit">Meld mij aan</button>
+    </form>
+    <label class="consent"><input type="checkbox" id="ok" required> Ik ga akkoord dat Bouwradar mijn e-mailadres en mijn lijstje bewaart om mij meldingen te sturen.</label>
+    <div class="msg" id="msg" role="status"></div>
+  </section>
+
+  <section class="how">
+    <div><b>1. Kies je sets</b>Tik op het hartje bij de sets die je nog wilt hebben.</div>
+    <div><b>2. Vergelijk prijzen</b>Bekijk in één tik de prijs bij LEGO, bol, Intertoys, Amazon en Tweakers.</div>
+    <div><b>3. Krijg een seintje</b>Meld je aan en wij waarschuwen je voordat je set verdwijnt.</div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Stopdata en adviesprijzen zijn verwachtingen op basis van openbare bronnen en kunnen veranderen. Controleer altijd de prijs bij de winkel.</p>
+    <p>Bouwradar is een onafhankelijke site en is niet verbonden aan, gesponsord door of goedgekeurd door de LEGO Group. LEGO® is een handelsmerk van de LEGO Group.</p>
+    <p>Sommige winkellinks kunnen affiliate-links zijn. Jij betaalt daardoor niets extra.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const SETS = [{"t":"Star Wars","n":"75192","name":"Millennium Falcon","p":849.99,"pc":7541},{"t":"Star Wars","n":"75328","name":"The Mandalorian Helmet","p":69.99,"pc":584},{"t":"Star Wars","n":"75367","name":"Venator-Class Republic Attack Cruiser","p":649.99,"pc":5374},{"t":"Star Wars","n":"75372","name":"Clone Trooper & Battle Droid Battle Pack","p":29.99,"pc":215},{"t":"Star Wars","n":"75382","name":"TIE Interceptor","p":229.99,"pc":1931},{"t":"Star Wars","n":"75389","name":"The Dark Falcon","p":179.99,"pc":1579},{"t":"Star Wars","n":"75397","name":"Jabba's Sail Barge","p":499.99,"pc":3942},{"t":"Star Wars","n":"75399","name":"Rebel U-wing Starfighter","p":69.99,"pc":594},{"t":"Star Wars","n":"75400","name":"Plo Koon's Jedi Starfighter Microfighter","p":14.99,"pc":89},{"t":"Star Wars","n":"75406","name":"Kylo Ren's Command Shuttle","p":69.99,"pc":386},{"t":"Star Wars","n":"75410","name":"Mando and Grogu's N-1 Starfighter","p":29.99,"pc":92},{"t":"Star Wars","n":"75412","name":"Death Trooper & Night Trooper Battle Pack","p":19.99,"pc":119},{"t":"Star Wars","n":"75413","name":"Republic Juggernaut","p":149.99,"pc":813},{"t":"Star Wars","n":"75414","name":"The Force Burner Snowspeeder","p":49.99,"pc":349},{"t":"Star Wars","n":"75415","name":"Kylo Ren Helmet","p":69.99,"pc":529},{"t":"Star Wars","n":"75428","name":"Battle Droid with STAP","p":129.99,"pc":1088},{"t":"Star Wars","n":"75429","name":"AT-AT Driver Helmet","p":79.99,"pc":730},{"t":"Star Wars","n":"75430","name":"Wicket the Ewok","p":119.99,"pc":1010},{"t":"Star Wars","n":"75456","name":"Advent Calendar 2026","p":34.99,"pc":293},{"t":"Icons","n":"10315","name":"Tranquil Garden","p":104.99,"pc":1363},{"t":"Icons","n":"10326","name":"Natural History Museum","p":299.99,"pc":4014},{"t":"Icons","n":"10335","name":"The Endurance","p":269.99,"pc":3011},{"t":"Icons","n":"10337","name":"Lamborghini Countach 5000 Quattrovalvole","p":179.99,"pc":1506},{"t":"Icons","n":"10341","name":"NASA Artemis Space Launch System","p":259.99,"pc":4601},{"t":"Icons","n":"10351","name":"Sherlock Holmes: Book Nook","p":119.99,"pc":1359},{"t":"Icons","n":"10353","name":"Williams Racing FW14B & Nigel Mansell","p":79.99,"pc":799},{"t":"Icons","n":"10363","name":"Leonardo da Vinci's Flying Machine","p":59.99,"pc":493},{"t":"Icons","n":"40516","name":"Everyone is Awesome","p":34.99,"pc":346},{"t":"Ideas","n":"21323","name":"Grand Piano","p":399.99,"pc":3662},{"t":"Ideas","n":"21333","name":"Vincent van Gogh - The Starry Night","p":169.99,"pc":2316},{"t":"Ideas","n":"21345","name":"Polaroid OneStep SX-70 Camera","p":79.99,"pc":516},{"t":"Ideas","n":"21351","name":"The Nightmare Before Christmas","p":199.99,"pc":2193},{"t":"Ideas","n":"21353","name":"The Botanical Garden","p":329.99,"pc":3792},{"t":"Ideas","n":"21355","name":"The Evolution of STEM","p":79.99,"pc":879},{"t":"Ideas","n":"21356","name":"River Steamboat","p":329.99,"pc":4090},{"t":"Ideas","n":"21360","name":"Willy Wonka & the Chocolate Factory","p":219.99,"pc":2025},{"t":"Technic","n":"42154","name":"2022 Ford GT","p":119.99,"pc":1466},{"t":"Technic","n":"42170","name":"Kawasaki Ninja H2R Motorcycle","p":79.99,"pc":643},{"t":"Technic","n":"42171","name":"Mercedes-AMG F1 W14 E Performance","p":219.99,"pc":1642},{"t":"Technic","n":"42173","name":"Koenigsegg Jesko Absolut Grey Hypercar","p":52.99,"pc":801},{"t":"Technic","n":"42175","name":"Volvo FMX Truck & EC230 Electric Excavator","p":199.99,"pc":2274},{"t":"Technic","n":"42176","name":"Porsche GT4 e-Performance Race Car","p":169.99,"pc":834},{"t":"Technic","n":"42177","name":"Mercedes-Benz G 500 PROFESSIONAL Line","p":249.99,"pc":2891},{"t":"Technic","n":"42179","name":"Planet Earth and Moon in Orbit","p":79.99,"pc":526},{"t":"Technic","n":"42197","name":"Backhoe Loader","p":9.99,"pc":104},{"t":"Technic","n":"42198","name":"Bush Plane","p":27.99,"pc":333},{"t":"Technic","n":"42199","name":"Monster Jam DIGatron Pull-Back","p":27.99,"pc":218},{"t":"Technic","n":"42200","name":"Monster Jam ThunderROARus Pull-Back","p":27.99,"pc":232},{"t":"Technic","n":"42201","name":"Deep-Sea Research Submarine","p":39.99,"pc":413},{"t":"Technic","n":"42202","name":"Ducati Panigale V4 S Motorcycle","p":199.99,"pc":1603},{"t":"Technic","n":"42203","name":"Tipping Dump Truck","p":49.99,"pc":462},{"t":"Technic","n":"42204","name":"Fast & Furious Toyota Supra MK4","p":59.99,"pc":810},{"t":"Technic","n":"42205","name":"Chevrolet Corvette Stingray","p":59.99,"pc":732},{"t":"Technic","n":"42208","name":"Aston Martin Valkyrie","p":59.99,"pc":707},{"t":"Technic","n":"42209","name":"Volvo L120 Electric Wheel Loader","p":99.99,"pc":973},{"t":"Technic","n":"42215","name":"Volvo EC500 Hybrid Excavator","p":399.99,"pc":2359},{"t":"Harry Potter","n":"76437","name":"The Burrow Collectors' Edition","p":259.99,"pc":2405},{"t":"Harry Potter","n":"76442","name":"Hogwarts Castle: Charms Class","p":19.99,"pc":204},{"t":"Harry Potter","n":"76445","name":"Hogwarts Castle: Herbology Class","p":49.99,"pc":390},{"t":"Harry Potter","n":"76447","name":"Hogwarts Castle: Flying Lessons","p":79.99,"pc":651},{"t":"Harry Potter","n":"76449","name":"Chomping Monster Book of Monsters","p":59.99,"pc":518},{"t":"Harry Potter","n":"76450","name":"Book Nook: Hogwarts Express","p":99.99,"pc":832},{"t":"Harry Potter","n":"76451","name":"Privet Drive: Aunt Marge's Visit","p":89.99,"pc":639},{"t":"Harry Potter","n":"76452","name":"Quality Quidditch Supplies & Ice Cream Parlour","p":99.99,"pc":795},{"t":"Harry Potter","n":"76458","name":"Thestral Family","p":69.99,"pc":548},{"t":"Harry Potter","n":"76467","name":"Luna Lovegood's House","p":99.99,"pc":764},{"t":"Harry Potter","n":"76470","name":"Enchanted Flying Ford Anglia","p":79.99,"pc":868},{"t":"Marvel","n":"76294","name":"X-Men: The X-Mansion","p":329.99,"pc":3093},{"t":"Marvel","n":"76307","name":"Iron Man Mech vs. Ultron","p":14.99,"pc":101},{"t":"Marvel","n":"76308","name":"Spider-Man Mech vs. Anti-Venom","p":14.99,"pc":107},{"t":"Marvel","n":"76309","name":"Spider-Man vs. Venom Muscle Car","p":29.99,"pc":254},{"t":"Marvel","n":"76313","name":"MARVEL Logo","p":99.99,"pc":931},{"t":"Marvel","n":"76315","name":"Iron Man's Laboratory: Hall of Armor","p":54.99,"pc":384},{"t":"Marvel","n":"76316","name":"Fantastic Four vs. Galactus Construction Figure","p":59.99,"pc":427},{"t":"Marvel","n":"76317","name":"Peter Parker's Apartment","p":49.99,"pc":394},{"t":"Marvel","n":"76319","name":"Captain America vs. Thanos","p":34.99,"pc":107},{"t":"Marvel","n":"76320","name":"Iron Man & War Machine vs. Hammer Drones","p":19.99,"pc":204},{"t":"Marvel","n":"76321","name":"Spider-Man vs. Doc Ock Subway Train Scene","p":49.99,"pc":393},{"t":"Marvel","n":"76322","name":"Avengers: Endgame Thor vs. Chitauri","p":49.99,"pc":373},{"t":"Marvel","n":"76323","name":"Avengers: Endgame Final Battle","p":99.99,"pc":621},{"t":"Marvel","n":"76324","name":"Spider-Man vs. Oscorp","p":129.99,"pc":808},{"t":"Marvel","n":"76325","name":"Avengers: Age of Ultron Quinjet","p":129.99,"pc":1131},{"t":"Marvel","n":"76326","name":"Iron Spider-Man Bust","p":59.99,"pc":379},{"t":"Marvel","n":"76327","name":"Iron Man MK4 Bust","p":59.99,"pc":436},{"t":"Marvel","n":"76329","name":"Miles Morales' Mask","p":69.99,"pc":487},{"t":"Marvel","n":"11198","name":"Spin and Electro Dinosaur Vehicle Chase","p":19.99,"pc":124},{"t":"Marvel","n":"11200","name":"Spidey and Gobby's Raptor Battle at Tree House HQ","p":54.99,"pc":143},{"t":"Marvel","n":"11207","name":"Spidey: Underwater Vehicles","p":34.99,"pc":154},{"t":"Architecture","n":"21060","name":"Himeji Castle","p":159.99,"pc":2125},{"t":"Art","n":"31216","name":"Keith Haring Dancing Figures","p":119.99,"pc":1773},{"t":"Botanicals","n":"10309","name":"Succulents","p":49.99,"pc":771},{"t":"Botanicals","n":"10340","name":"Wreath","p":99.99,"pc":1194},{"t":"Botanicals","n":"10345","name":"Flower Arrangement","p":109.99,"pc":1161},{"t":"Botanicals","n":"10370","name":"Poinsettia","p":49.99,"pc":608},{"t":"Speed Champions","n":"76924","name":"Mercedes-AMG G 63 & Mercedes-AMG SL 63","p":49.99,"pc":808},{"t":"Speed Champions","n":"77242","name":"Ferrari SF-24 F1 Race Car","p":26.99,"pc":275},{"t":"Speed Champions","n":"77243","name":"Oracle Red Bull Racing RB20 F1 Race Car","p":26.99,"pc":251},{"t":"Speed Champions","n":"77244","name":"Mercedes-AMG F1 W15 Race Car","p":26.99,"pc":267},{"t":"Speed Champions","n":"77245","name":"Aston Martin Aramco F1 AMR24 Race Car","p":26.99,"pc":269},{"t":"Speed Champions","n":"77246","name":"Visa Cash App RB VCARB 01 F1 Race Car","p":26.99,"pc":248},{"t":"Speed Champions","n":"77248","name":"BWT Alpine F1 Team A524 Race Car","p":26.99,"pc":258},{"t":"Speed Champions","n":"77249","name":"Williams Racing FW46 F1 Race Car","p":26.99,"pc":263},{"t":"Speed Champions","n":"77250","name":"MoneyGram Haas F1 Team VF-24 Race Car","p":26.99,"pc":242},{"t":"Speed Champions","n":"77251","name":"McLaren F1 Team MCL38 Race Car","p":26.99,"pc":269},{"t":"City","n":"60312","name":"Police Car","p":9.99,"pc":94},{"t":"City","n":"60316","name":"Police Station","p":64.99,"pc":668},{"t":"City","n":"60337","name":"Express Passenger Train","p":149.99,"pc":764},{"t":"City","n":"60402","name":"Blue Monster Truck","p":14.99,"pc":148},{"t":"City","n":"60404","name":"Burger Truck","p":19.99,"pc":194},{"t":"City","n":"60407","name":"Red Double-Decker Sightseeing Bus","p":29.99,"pc":384},{"t":"City","n":"60419","name":"Police Prison Island","p":99.99,"pc":980},{"t":"City","n":"60423","name":"Downtown Streetcar and Station","p":89.99,"pc":811},{"t":"City","n":"60445","name":"F1 Truck with RB20 & AMR24 F1 Cars","p":99.99,"pc":1086},{"t":"City","n":"60457","name":"Custom Police Car Garage","p":49.99,"pc":489},{"t":"City","n":"60465","name":"Emergency Air Ambulance Airplane","p":49.99,"pc":403},{"t":"City","n":"60466","name":"Bulldozer","p":59.99,"pc":682},{"t":"City","n":"60469","name":"Central Train Station","p":89.99,"pc":752},{"t":"City","n":"60470","name":"Explorer Train","p":199.99,"pc":1517},{"t":"City","n":"60471","name":"Arctic Truck","p":109.99,"pc":1057},{"t":"City","n":"60495","name":"Recycling Truck","p":34.99,"pc":434},{"t":"Disney","n":"43217","name":"'Up' House","p":59.99,"pc":598},{"t":"Disney","n":"43258","name":"Kakamora Barge","p":99.99,"pc":572},{"t":"Disney","n":"43262","name":"Maleficent's and Cruella De Vil's Dresses","p":69.99,"pc":524},{"t":"Disney","n":"43263","name":"Beauty and the Beast Castle","p":279.99,"pc":2916},{"t":"Disney","n":"43267","name":"Princess Castle & Royal Pets","p":119.99,"pc":787},{"t":"Disney","n":"43268","name":"Lilo and Stitch Beach House","p":89.99,"pc":834},{"t":"Disney","n":"43270","name":"Moana's Adventure Canoe","p":59.99,"pc":529},{"t":"Disney","n":"43272","name":"Heihei","p":39.99,"pc":566},{"t":"Disney","n":"43277","name":"Cruella De Vil's Car","p":49.99,"pc":378},{"t":"Disney","n":"40708","name":"Mini Disney Ariel's Castle","p":39.99,"pc":557}];
+const END = new Date('2026-12-31T23:59:59+01:00');
+const THEME_COLORS = {
+  'Star Wars':'#1b1b1f','Icons':'#7a4b2a','Ideas':'#0a7cc1','Technic':'#4b4f56','Harry Potter':'#6b2c3e',
+  'Marvel':'#b0151d','Architecture':'#8a8070','Art':'#d65a1f','Botanicals':'#2f7d4a','Speed Champions':'#c4161c',
+  'City':'#0f6fb6','Disney':'#3a4fb0'
+};
+// Popular first: big display sets usually sought most by adult collectors
+const POP = ['75192','10326','21323','75367','75397','21333','76437','43263','10335','21360','76294','10341','21356','21353','42171','10337','75382','21351','42177'];
+
+const $ = s => document.querySelector(s);
+const fmt = n => n.toLocaleString('nl-NL',{style:'currency',currency:'EUR'});
+const fmtN = n => n.toLocaleString('nl-NL');
+
+// Storage (wrapped: can fail in some contexts)
+const store = {
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let favs = new Set(store.get('sr-favs',[]));
+let state = {q:'',theme:'Alles',sort:'pop',onlyFavs:false};
+
+function shopLinks(s){
+  const q = encodeURIComponent('lego ' + s.n);
+  return [
+    ['LEGO.com','https://www.lego.com/nl-nl/search?q='+s.n],
+    ['bol','https://www.bol.com/nl/nl/s/?searchtext='+q],
+    ['Intertoys','https://www.intertoys.nl/search?q='+q],
+    ['Amazon.nl','https://www.amazon.nl/s?k='+q],
+    ['Tweakers','https://tweakers.net/pricewatch/zoeken/?keyword='+q],
+    ['Marktplaats','https://www.marktplaats.nl/q/'+encodeURIComponent('lego '+s.n)+'/']
+  ];
+}
+
+function countdown(){
+  const ms = Math.max(0, END - new Date());
+  const d = Math.floor(ms/864e5), h = Math.floor(ms%864e5/36e5), m = Math.floor(ms%36e5/6e4);
+  $('#cd-d').textContent = d; $('#cd-h').textContent = h; $('#cd-m').textContent = m;
+}
+
+function renderChips(){
+  const themes = ['Alles', ...[...new Set(SETS.map(s=>s.t))]];
+  const el = $('#chips'); el.innerHTML = '';
+  const fav = document.createElement('button');
+  fav.className='chip fav'; fav.textContent='♥ Mijn lijst'; fav.setAttribute('aria-pressed',state.onlyFavs);
+  fav.onclick=()=>{state.onlyFavs=!state.onlyFavs;renderChips();render()};
+  el.appendChild(fav);
+  themes.forEach(t=>{
+    const b=document.createElement('button');
+    b.className='chip'; b.textContent=t; b.setAttribute('aria-pressed', state.theme===t);
+    b.onclick=()=>{state.theme=t;renderChips();render()};
+    el.appendChild(b);
+  });
+}
+
+function sorted(list){
+  const by = {
+    'price-asc':(a,b)=>a.p-b.p,
+    'price-desc':(a,b)=>b.p-a.p,
+    'ppp':(a,b)=>a.p/a.pc-b.p/b.pc,
+    'pieces':(a,b)=>b.pc-a.pc,
+    'pop':(a,b)=>{const ia=POP.indexOf(a.n),ib=POP.indexOf(b.n);return (ia<0?999:ia)-(ib<0?999:ib)||b.p-a.p}
+  }[state.sort];
+  return [...list].sort(by);
+}
+
+function render(){
+  const q = state.q.trim().toLowerCase();
+  let list = SETS.filter(s =>
+    (state.theme==='Alles'||s.t===state.theme) &&
+    (!state.onlyFavs||favs.has(s.n)) &&
+    (!q || s.name.toLowerCase().includes(q) || s.n.includes(q) || s.t.toLowerCase().includes(q))
+  );
+  list = sorted(list);
+  $('#meta').textContent = list.length + (list.length===1?' set':' sets') + (favs.size?' · '+favs.size+' op je lijst':'');
+  const grid = $('#grid'); grid.innerHTML='';
+  if(!list.length){
+    grid.innerHTML = '<div class="empty">'+(state.onlyFavs?'Je lijst is nog leeg. Tik op het hartje bij een set.':'Geen sets gevonden.')+'</div>';
+    return;
+  }
+  const frag = document.createDocumentFragment();
+  list.forEach(s=>{
+    const c = document.createElement('article'); c.className='card';
+    const color = THEME_COLORS[s.t]||'#444';
+    const ppp = (s.p/s.pc*100).toFixed(1).replace('.',',');
+    c.innerHTML = `
+      <div class="top">
+        <div class="tile" style="background:${color}">${s.n}</div>
+        <div class="title"><h3></h3><p>${s.t} · set ${s.n}</p></div>
+        <button class="heart" aria-label="Zet op mijn lijst" aria-pressed="${favs.has(s.n)}">${favs.has(s.n)?'♥':'♡'}</button>
+      </div>
+      <div class="stats">
+        <span class="stat big">Adviesprijs <b>${fmt(s.p)}</b></span>
+        <span class="stat"><b>${fmtN(s.pc)}</b> stenen</span>
+        <span class="stat"><b>${ppp} ct</b> per steen</span>
+      </div>
+      <button class="compare" aria-expanded="false">Prijzen vergelijken</button>
+      <div class="shops"></div>`;
+    c.querySelector('h3').textContent = s.name;
+    const shops = c.querySelector('.shops');
+    shopLinks(s).forEach(([label,url])=>{
+      const a=document.createElement('a'); a.className='shop'; a.href=url; a.target='_blank'; a.rel='noopener nofollow sponsored'; a.textContent=label;
+      shops.appendChild(a);
+    });
+    const cmp = c.querySelector('.compare');
+    cmp.onclick=()=>{const o=c.classList.toggle('open');cmp.setAttribute('aria-expanded',o);cmp.textContent=o?'Sluiten':'Prijzen vergelijken'};
+    const h = c.querySelector('.heart');
+    h.onclick=()=>{
+      if(favs.has(s.n)){favs.delete(s.n);toast('Verwijderd van je lijst')}
+      else{favs.add(s.n);toast('Op je lijst gezet. Meld je onderaan aan voor een seintje.')}
+      store.set('sr-favs',[...favs]);
+      h.setAttribute('aria-pressed',favs.has(s.n)); h.textContent=favs.has(s.n)?'♥':'♡';
+      $('#meta').textContent = $('#meta').textContent.replace(/ · \d+ op je lijst$/,'') + (favs.size?' · '+favs.size+' op je lijst':'');
+      if(state.onlyFavs) render();
+    };
+    frag.appendChild(c);
+  });
+  grid.appendChild(frag);
+}
+
+let tt;
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),2600)}
+
+$('#q').addEventListener('input',e=>{state.q=e.target.value;render()});
+$('#sort').addEventListener('change',e=>{state.sort=e.target.value;render()});
+
+$('#form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const email=$('#email').value.trim(), msg=$('#msg');
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){msg.textContent='Vul een geldig e-mailadres in.';return}
+  if(!$('#ok').checked){msg.textContent='Vink eerst het akkoord aan.';return}
+  msg.textContent='Even geduld…';
+  try{
+    const r = await fetch('/api/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,sets:[...favs]})});
+    if(!r.ok) throw new Error();
+    msg.textContent = favs.size ? 'Top! Je krijgt een seintje over je '+favs.size+' set(s).' : 'Top! Je bent aangemeld. Tik op hartjes om je lijst te vullen.';
+    $('#form').reset();
+  }catch(err){
+    msg.textContent='Aanmelden lukt nu niet. Probeer het later opnieuw.';
+  }
+});
+
+renderChips(); render(); countdown(); setInterval(countdown,30000);
+</script>
+</body>
+</html>
