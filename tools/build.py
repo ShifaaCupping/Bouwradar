@@ -31,6 +31,8 @@ def num(x):
 e = html.escape
 
 SETS = json.loads((ROOT / 'data/sets.json').read_text())
+SITE = json.loads((ROOT / 'data/site.json').read_text())
+LEGAL_OK = all(SITE.get(k, '').strip() for k in ('eigenaar', 'email', 'kvk', 'adres'))
 for s in SETS:
     s['slug'] = f"{s['n']}-{slugify(s['name'])}"
 
@@ -87,8 +89,7 @@ def head(title, desc, path, extra=''):
 <meta property="og:url" content="{SITE_URL}{path}">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#d01012">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&display=swap">
+<link rel="preload" href="/assets/fonts/archivo-latin-wdth-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/assets/style.css">
 {extra}</head>
 <body>
@@ -113,12 +114,13 @@ def bottomnav(active):
 def alert_block(set_n=None, set_name=None):
     if set_n:
         h2 = f'Seintje voordat {e(set_name)} verdwijnt'
-        p = 'Wij mailen je als deze set bijna uit productie gaat of ergens in de aanbieding is. Geen spam, altijd afmelden.'
+        p = 'Wij mailen je als de stopdatum van deze set nadert of verandert. Geen spam, altijd afmelden.'
         data = f' data-set="{set_n}"'
     else:
         h2 = 'Krijg een seintje op tijd'
-        p = 'Wij mailen je als een set op je lijst bijna verdwijnt of ergens in de aanbieding is. Geen spam, altijd afmelden.'
+        p = 'Wij mailen je als de stopdatum van een set op je lijst nadert of verandert. Geen spam, altijd afmelden.'
         data = ''
+    PRIVACY_LINK = ' (zie de <a href="/privacy/">privacyverklaring</a>)' if LEGAL_OK else ''
     return f'''<section class="alert" id="meldingen">
     <h2>{h2}</h2>
     <p>{p}</p>
@@ -126,22 +128,23 @@ def alert_block(set_n=None, set_name=None):
       <input type="email" id="email" placeholder="jouw@email.nl" aria-label="E-mailadres" autocomplete="email" required>
       <button type="submit">Meld mij aan</button>
     </form>
-    <label class="consent"><input type="checkbox" id="ok" required> Ik ga akkoord dat Steenradar mijn e-mailadres en mijn lijstje bewaart om mij meldingen te sturen.</label>
+    <label class="consent"><input type="checkbox" id="ok" required> Ik ga akkoord dat Steenradar mijn e-mailadres en mijn lijstje bewaart om mij meldingen te sturen{PRIVACY_LINK}.</label>
     <div class="msg" id="msg" role="status"></div>
   </section>
 '''
 
-FOOTER = '''<footer>
+LEGAL_LINKS = '<a href="/privacy/">Privacy</a><a href="/contact/">Contact</a>' if LEGAL_OK else ''
+FOOTER = f'''<footer>
   <div class="wrap">
-    <nav aria-label="Voettekst"><a href="/">Alle sets</a><a href="/#meldingen">Meldingen</a><a href="/uitleg/">Uitleg</a></nav>
+    <nav aria-label="Voettekst"><a href="/">Alle sets</a><a href="/#meldingen">Meldingen</a><a href="/uitleg/">Uitleg</a>{LEGAL_LINKS}</nav>
     <p>Prijzen vergelijken op Steenradar is gratis. Als je via een winkellink iets koopt, kunnen wij een kleine commissie krijgen; jij betaalt niets extra. De volgorde van sets en winkels hangt daar niet van af.</p>
     <p>Stopdata en adviesprijzen zijn verwachtingen op basis van openbare bronnen en kunnen veranderen. Controleer altijd de prijs bij de winkel.</p>
-    <p>Steenradar is een onafhankelijke site en is niet verbonden aan, gesponsord door of goedgekeurd door de LEGO Group. LEGO® is een handelsmerk van de LEGO Group.</p>
+    <p>LEGO® is een handelsmerk van de LEGO Group, die deze site niet sponsort, autoriseert of onderschrijft. Steenradar is een onafhankelijke site.</p>
     <p>Steenradar is ook niet van bol of een andere winkel. De winkellinks sturen je door naar de website van die winkel, bijvoorbeeld bol; je bestelt en betaalt daar. Die winkels zijn niet verantwoordelijk voor Steenradar.</p>
   </div>
 </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-'''
+'''.replace('{{', '{').replace('}}', '}')
 
 def write(path, content):
     p = ROOT / path.lstrip('/')
@@ -349,8 +352,52 @@ uitleg += topbar('uitleg') + '''<section class="hero"><div class="wrap">
 ''' + alert_block() + '</main>\n' + FOOTER + bottomnav('uitleg') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
 write('/uitleg/', uitleg)
 
+# ---------- Privacy + contact (alleen als data/site.json is ingevuld) ----------
+legal_urls = []
+if LEGAL_OK:
+    who = e(SITE['eigenaar']); mail = e(SITE['email']); kvk = e(SITE['kvk']); adres = e(SITE['adres'])
+    btw = f'<p><b>Btw-identificatienummer:</b> {e(SITE["btw_id"])}</p>' if SITE.get('btw_id', '').strip() else ''
+    privacy = head('Privacyverklaring | Steenradar', 'Welke gegevens Steenradar verwerkt, waarom, en wat je rechten zijn.', '/privacy/')
+    privacy += topbar('') + f'''<section class="hero"><div class="wrap"><h1>Privacyverklaring</h1>
+  <p class="lede">Steenradar verzamelt zo weinig mogelijk. Hier lees je wat we bewaren, waarom, en hoe je het laat verwijderen.</p></div></section>
+<main class="wrap legal">
+  <h2>Wie is verantwoordelijk?</h2>
+  <p>Steenradar is een handelsnaam van {who}, ingeschreven bij de KVK onder nummer {kvk}. Vragen over privacy stuur je naar <a href="mailto:{mail}">{mail}</a>.</p>
+  <h2>Welke gegevens en waarom</h2>
+  <p><b>Meldingen.</b> Meld je je aan voor een seintje, dan bewaren we je e-mailadres en de setnummers op je lijst. We gebruiken die alleen om je te mailen als de stopdatum van die sets nadert of verandert. De grondslag is je toestemming, die je geeft met het vinkje bij het formulier.</p>
+  <p><b>Mijn lijst.</b> De sets die je met een hartje bewaart, staan alleen in je eigen browser (localStorage). Wij kunnen die niet zien, tenzij je je aanmeldt voor meldingen.</p>
+  <p><b>Bezoek aan de site.</b> De site draait bij Cloudflare. Cloudflare verwerkt technische gegevens zoals je IP-adres om de site te leveren en te beveiligen. Wij gebruiken geen analytische of tracking-cookies en laden geen lettertypes of scripts van Google of andere derden.</p>
+  <h2>Winkellinks</h2>
+  <p>Klik je op een winkellink, bijvoorbeeld naar bol, dan ga je naar de website van die winkel. Die winkel kan daar cookies plaatsen om bij te houden dat je via Steenradar kwam, zodat wij een kleine commissie krijgen als je iets koopt. Daarvoor geldt de privacyverklaring van die winkel.</p>
+  <h2>Hoe lang we gegevens bewaren</h2>
+  <p>Je e-mailadres en lijst bewaren we tot je je afmeldt. Daarna verwijderen we ze binnen 30 dagen.</p>
+  <h2>Met wie we gegevens delen</h2>
+  <p>We verkopen je gegevens niet. Cloudflare host de site en de database waarin aanmeldingen staan; zij verwerken die gegevens alleen voor ons.</p>
+  <h2>Jouw rechten</h2>
+  <p>Je kunt je gegevens inzien, laten aanpassen of laten verwijderen, en je toestemming altijd intrekken. Mail naar <a href="mailto:{mail}">{mail}</a>; we reageren binnen een maand. Ben je het niet eens met hoe we met je gegevens omgaan, dan kun je een klacht indienen bij de Autoriteit Persoonsgegevens.</p>
+  <p class="datanote">Laatst bijgewerkt: 15 november 2026</p>
+</main>
+''' + FOOTER + bottomnav('') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
+    write('/privacy/', privacy)
+    contact = head('Contact | Steenradar', 'Contactgegevens en bedrijfsgegevens van Steenradar.', '/contact/')
+    contact += topbar('') + f'''<section class="hero"><div class="wrap"><h1>Contact</h1>
+  <p class="lede">Vraag, foutje in een stopdatum of samenwerking? Mail ons, we reageren meestal binnen twee werkdagen.</p></div></section>
+<main class="wrap legal">
+  <p><b>E-mail:</b> <a href="mailto:{mail}">{mail}</a></p>
+  <p><b>Handelsnaam:</b> Steenradar</p>
+  <p><b>Eigenaar:</b> {who}</p>
+  <p><b>Adres:</b> {adres}</p>
+  <p><b>KVK-nummer:</b> {kvk}</p>
+  {btw}
+</main>
+''' + FOOTER + bottomnav('') + '<script src="/assets/app.js"></script>\n</body>\n</html>\n'
+    write('/contact/', contact)
+    legal_urls = ['/privacy/', '/contact/']
+else:
+    print('Let op: data/site.json is nog niet ingevuld, dus privacy- en contactpagina zijn overgeslagen.')
+
 # ---------- Sitemap + robots ----------
-urls = ['/', '/uitleg/'] + [f"/sets/{s['slug']}/" for s in SETS]
+urls = ['/', '/uitleg/'] + legal_urls + [f"/sets/{s['slug']}/" for s in SETS]
 sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
 sm += ''.join(f'  <url><loc>{SITE_URL}{u}</loc></url>\n' for u in urls) + '</urlset>\n'
 (ROOT / 'sitemap.xml').write_text(sm)

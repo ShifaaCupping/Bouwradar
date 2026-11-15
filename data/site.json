@@ -1,0 +1,9 @@
+{
+  "_uitleg": "Vul dit in en draai daarna: python3 tools/build.py. Zolang naam, e-mail, KVK-nummer of adres leeg is, worden de privacy- en contactpagina niet gemaakt.",
+  "handelsnaam": "Steenradar",
+  "eigenaar": "",
+  "email": "",
+  "kvk": "",
+  "adres": "",
+  "btw_id": ""
+}
