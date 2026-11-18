@@ -2,12 +2,12 @@
 """Bouwt alle pagina's van Steenradar uit data/sets.json.
 
 Gebruik:  python3 tools/build.py
-Pas SITE_URL aan naar je eigen domein en draai het script opnieuw.
+Standaard domein: https://steenradar.nl (andere waarde: SITE_URL=https://... python3 tools/build.py).
 """
 import json, re, html, os, unicodedata
 from pathlib import Path
 
-SITE_URL = os.environ.get('SITE_URL', 'https://bouwradar.pages.dev').rstrip('/')
+SITE_URL = os.environ.get('SITE_URL', 'https://steenradar.nl').rstrip('/')
 STOP_DATE = '31 december 2026'
 ROOT = Path(__file__).resolve().parent.parent
 
